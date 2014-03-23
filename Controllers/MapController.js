@@ -14,7 +14,7 @@ MapController.prototype.imagesLoad = function(){
 };
 MapController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["Action","Character","LStarQuery","Face"],self.helperLoad);
+	self.load.library(["Action","Character","LStarQuery","Face","Items/Entrance"],self.helperLoad);
 };
 MapController.prototype.helperLoad=function(){
 	var self = this;
@@ -27,6 +27,9 @@ MapController.prototype.libraryComplete=function(){
 MapController.prototype.addMap=function(mapPath){
 	var self = this;
 	self.model.loadMapFile(mapPath,self.loadMapFileOver);
+};
+MapController.prototype.addCoordinateCheck=function(index,startX,startY,endX,endY,funName){
+	this.model.addCoordinateCheck(index,startX,startY,endX,endY,funName);
 };
 MapController.prototype.loadMapFileOver=function(){
 	var self = this;
@@ -110,6 +113,7 @@ MapController.prototype.mapClick = function(event){
 	var coordinate = self.view.hero.getTo();
 	var fx = coordinate[0] , fy = coordinate[1];
 	var cx = event.selfX/self.view.baseLayer.scaleX/self.stepWidth >>> 0 , cy = event.selfY/self.view.baseLayer.scaleY/self.stepHeight >>> 0;
+	cx = event.selfX/self.stepWidth >>> 0 , cy = event.selfY/self.stepHeight >>> 0;
 	var returnList = self.query.queryPath(new LPoint(fx,fy),new LPoint(cx,cy));
 	if(returnList.length > 0){
 		self.view.hero.setRoad(returnList);
@@ -162,4 +166,7 @@ MapController.prototype.viewBaseLayerScale = function(num){
 MapController.prototype.testGridShow = function(event){
 	var self = event.clickTarget.parent.parent.controller;
 	self.view.gridLayer.visible = !self.view.gridLayer.visible;
+};
+MapController.prototype.addItem = function(name,x,y){
+	this.view.addItem(name,parseInt(x),parseInt(y));	
 };

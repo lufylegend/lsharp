@@ -2,7 +2,9 @@ function MapModel(){
 	base(this,MyModel,[]);
 }
 MapModel.prototype.construct=function(){
-	this.map = null;
+	var self = this;
+	self.map = null;
+	self.atRect = [];
 };
 MapModel.prototype.loadMapFile=function(mapPath){
 	var self = this;
@@ -16,7 +18,26 @@ MapModel.prototype.loadMapFileOver=function(event){
 	var self = event.target.parent;
 	//保存战场地图文件内容
 	self.map = JSON.parse(event.target.data);
+	
+	var grids = self.map.data;
+	self.stepWidth = self.map.width/grids[0].length;
+	self.stepHeight = self.map.height/grids.length;
+	
 	self.controller.loadMapFileOver();
+};
+MapModel.prototype.addCoordinateCheck=function(index,startX,startY,endX,endY,funName){
+	var self = this;
+	var child = {
+		"index":index,
+		"rect":new LRectangle(
+			parseInt(startX),
+			parseInt(startY),
+			parseInt(endX)-parseInt(startX),
+			parseInt(endY)-parseInt(startY)
+		),
+		"fun":funName
+	};
+	self.atRect.push(child);
 };
 MapModel.prototype.getImages=function(){
 	var self = this;
@@ -30,7 +51,7 @@ MapModel.prototype.getImages=function(){
 		}
 	}
 	
-	for(var i=0;i<self.map.builds.length;i++){
+	for(var i=0;self.map.builds && i<self.map.builds.length;i++){
 		for(var j=0;j<self.map.builds[i].length;j++){
 			var imgObj = self.map.builds[i][j];
 			list.push({name:imgObj.img,path:LMvc.IMG_PATH+"map/"+imgObj.path});

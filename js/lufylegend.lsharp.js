@@ -1222,9 +1222,34 @@ LScriptRPG.analysis = function (childType, lineValue){
 		case "RPGTalk":
 			LRPGTalkScript.analysis(lineValue);
 			break;
+		case "RPGItem":
+			LRPGItemScript.analysis(lineValue);
+			break;
 		default:
 			LGlobal.script.analysis();
 	}
+};
+/*
+* LRPGItemScript.js
+**/
+LRPGItemScript = function(){};
+LRPGItemScript.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGItem.add":
+			LRPGItemScript.add(value,start,end);
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+LRPGItemScript.add = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	if(LRPGObject.RPGMap){
+		LRPGObject.RPGMap.addItem.apply(LRPGObject.RPGMap,params);
+	}
+	LGlobal.script.analysis();
 };
 /*
 * LRPGTalkScript.js
@@ -1263,10 +1288,33 @@ LRPGMapScript.analysis=function(){
 	switch(lineValue){
 		case "RPGMap.end()":
 			setTimeout(function(){
+				var i,l,childs = LRPGObject.RPGMap.view.charaLayer.childList;
+				for(i=0,l=childs.length;i<l;i++){
+					if(typeof childs[i].checkCoordinate == "function"){
+						childs[i].checkCoordinate(LRPGObject.RPGMap,true);
+					}
+				}
+				if(LRPGObject.RPGMap.view.hero && 
+					script.scriptArray.varList["x"] && script.scriptArray.varList["y"]){
+					LRPGObject.RPGMap.view.hero.setCoordinate(
+						parseInt(script.scriptArray.varList["x"])*LRPGObject.RPGMap.view.hero.w,
+						parseInt(script.scriptArray.varList["y"])*LRPGObject.RPGMap.view.hero.h);
+					delete script.scriptArray.varList["x"];
+					delete script.scriptArray.varList["y"];
+					if(script.scriptArray.varList["action"] && script.scriptArray.varList["direction"]){
+						LRPGObject.RPGMap.view.hero.setActionDirection(
+							script.scriptArray.varList["action"],
+							script.scriptArray.varList["direction"]
+						);
+						delete script.scriptArray.varList["action"];
+						delete script.scriptArray.varList["direction"];
+					}
+					
+				}
+				LRPGObject.RPGMap.mapMove();
 				LRPGObject.RPGMap.initOver=true;
 				LGlobal.script.analysis();
 			},100);
-			//暂略
 			return;
 		case "initialization.start":
 			LRPGMapScript.initialization();
@@ -1274,8 +1322,36 @@ LRPGMapScript.analysis=function(){
 		case "function.start":
 			LRPGMapScript.addFunction();
 			break;
+		case "loop.start":
+			LRPGMapScript.loop();
+			break;
 		default:
 			LRPGMapScript.analysis();
+	}
+};
+LRPGMapScript.loop=function(){
+	var script = LGlobal.script;
+	var lineValue = LMath.trim(script.lineList.shift());
+	if(lineValue.length == 0){
+		LRPGMapScript.loop();
+		return;
+	}
+	trace("LRPGMapScript loop lineValue = " + lineValue);
+	if(lineValue == "loop.end"){
+		LRPGMapScript.analysis();
+		return;
+	}
+	var params,i;
+	var start = lineValue.indexOf("(");
+	var end = lineValue.indexOf(")");
+	switch(lineValue.substr(0,start)){
+		case "RPGCharacter.atCoordinate":
+			params = lineValue.substring(start+1,end).split(",");
+			LRPGObject.RPGMap.addCoordinateCheck.apply(LRPGObject.RPGMap,params);
+			LRPGMapScript.loop();
+			break;
+		default:
+			LRPGMapScript.loop();
 	}
 };
 LRPGMapScript.addFunction=function(){
