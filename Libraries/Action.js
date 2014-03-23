@@ -2,7 +2,7 @@ function Action(index,action,direction){
 	var self = this;
 	base(self,LSprite,[]);
 	
-	var list = LGlobal.divideCoordinate(5120,240,1,16);
+	var list = LGlobal.divideCoordinate(320,240,1,1);
 	var data = new LBitmapData(LMvc.datalist["chara-default"],0,0,320,240);
 	self.anime = new LAnimationTimeline(data,list);
 	self.anime.speed = 1;
@@ -14,5 +14,9 @@ function Action(index,action,direction){
 }
 Action.prototype.loadOver = function(event){
 	var self = event.target.parent;
-	self.anime.bitmap.bitmapData = new LBitmapData(event.currentTarget,0,0,320,240);
+	var bitmapData = new LBitmapData(event.currentTarget);
+	var list = LGlobal.divideCoordinate(bitmapData.width,240,1,bitmapData.width/320 >>> 0);
+	bitmapData.setProperties(0,0,320,240);
+	self.anime.bitmap.bitmapData = bitmapData;
+	self.anime.imageArray = list;
 };

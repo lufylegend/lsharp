@@ -21,7 +21,7 @@ MapView.prototype.buildLayerInit=function(){
 	var self = this;
 	//获取地图定义
 	var map = self.model.map;
-	for(var i=0;i<map.builds.length;i++){
+	for(var i=0;map.builds && i<map.builds.length;i++){
 		for(var j=0;j<map.imgs[i].length;j++){
 			var imgObj = map.builds[i][j];
 			var bitmap = new LBitmap(new LBitmapData(LMvc.datalist[imgObj.img],imgObj.rect[0],imgObj.rect[1],map.pieceWidth,map.pieceHeight));
@@ -41,8 +41,8 @@ MapView.prototype.addCharaLayer=function(index,action,direction,x,y,ishero){
 	var stepWidth = map.width/grids[0].length;
 	var stepHeight = map.height/grids.length;
 	
-	var chara = new Character(index,stepWidth,stepHeight);
-	chara.setActionDirection(action,direction);
+	var chara = new Character(index,stepWidth,stepHeight,action,direction);
+	//chara.setActionDirection(action,direction);
 	chara.setCoordinate(parseInt(x)*stepWidth,parseInt(y)*stepHeight);
 	self.charaLayer.addChild(chara);
 	if(JSON.parse(ishero))self.hero = chara;
@@ -161,4 +161,16 @@ MapView.prototype.layerInit=function(){
 	var f = new FPS();
 	self.addChild(f);
 	
+};
+
+MapView.prototype.addItem = function(name,x,y){
+	var self = this,item;
+	switch(name){
+		case "entrance":
+			item = new Entrance();
+			item.x = x*self.model.stepWidth;
+			item.y = y*self.model.stepHeight;
+			self.mapLayer.addChild(item);
+			break;
+	}	
 };

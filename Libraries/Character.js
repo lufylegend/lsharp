@@ -12,7 +12,7 @@ var CharacterDirection = {
 	LEFT_UP:"left_up",
 	RIGHT_UP:"right_up"
 };
-function Character(index,w,h){
+function Character(index,w,h,action,direction){
 	var self = this;
 	base(self,LSprite,[]);
 	self.index = index;
@@ -42,8 +42,15 @@ function Character(index,w,h){
 		"1,0":CharacterDirection.RIGHT,
 		"1,1":CharacterDirection.RIGHT_DOWN
 	};
+	self.coordinateRects = {};
 	self.addEventListener(LEvent.ENTER_FRAME,self.onframe);
-	self.setActionDirection(CharacterAction.STAND,CharacterDirection.DOWN);
+	if(!action){
+		action = CharacterAction.STAND;
+	}
+	if(!direction){
+		direction = CharacterDirection.DOWN;
+	}
+	self.setActionDirection(action,direction);
 }
 Character.prototype.histTestOn = function(x,y){
 	var s = this.rect;
@@ -97,8 +104,33 @@ Character.prototype.getValue = function(v1,v2){
 	if(v1 == v2)return 0;
 	return v1 < v2 ? 1 : -1;
 };
-Character.prototype.move = function(){
+Character.prototype.checkCoordinate = function(controller,initFlag){
 	var self = this;
+	var model=controller.model,i,obj,rect,rects = model.atRect,coor;
+	for(i=0;i<rects.length;i++){
+		obj = rects[i];
+		rect = obj.rect;
+		if(obj.index != self.index){
+			continue;
+		}
+		coor = self.getTo();
+		if(coor[0] >= rect.x && coor[0] <= rect.right && 
+			coor[1] >= rect.y && coor[1] <= rect.bottom){
+			if(self.coordinateRects[obj.fun]){
+				continue;
+			}
+			self.coordinateRects[obj.fun] = true;
+			if(initFlag){
+				continue;
+			}
+			ScriptFunction.analysis("Call."+obj.fun + "();");
+		}else if(self.coordinateRects[obj.fun]){
+			self.coordinateRects[obj.fun]= null;
+		}
+	}
+};
+Character.prototype.move = function(){
+	var self = this,controller=self.parent.parent.parent.controller;
 	if(self.x == self.to.x && self.y == self.to.y)return;
 	
 	if(self.x != self.to.x && self.y != self.to.y){
@@ -115,7 +147,8 @@ Character.prototype.move = function(){
 			self.x = self.to.x;
 			self.y = self.to.y;
 			self.changeAction(CharacterAction.STAND);
-			self.parent.parent.parent.controller.mapMove();
+			controller.mapMove();
+			self.checkCoordinate(controller);
 			return;
 		}
 		var next = self.roads[0];
@@ -126,11 +159,12 @@ Character.prototype.move = function(){
 		}
 		if(self.roads.length > 0){
 			self.setTo();
+			self.checkCoordinate(controller);
 		}
 		
 	}
 	self.setMoveDirection(mx,my);
-	self.parent.parent.parent.controller.mapMove();
+	controller.mapMove();
 };
 Character.prototype.onframe = function(event){
 	var self = event.target;
