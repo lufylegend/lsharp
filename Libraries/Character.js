@@ -1,53 +1,74 @@
-function Character(img,w,h){
+var CharacterAction = {
+	STAND:"stand",
+	MOVE:"move"
+};
+var CharacterDirection = {
+	DOWN:"down",
+	LEFT:"left",
+	RIGHT:"right",
+	UP:"up",
+	LEFT_DOWN:"left_down",
+	RIGHT_DOWN:"right_down",
+	LEFT_UP:"left_up",
+	RIGHT_UP:"right_up"
+};
+function Character(index,w,h){
 	var self = this;
 	base(self,LSprite,[]);
-	var list = LGlobal.divideCoordinate(560,736,8,8);
-	var data = new LBitmapData(img,0,0,70,92);
-	hero = new LAnimationTimeline(data,list);
-	hero.speed = 2;
-	hero.setLabel("down",0,0);
-	hero.setLabel("left",1,0);
-	hero.setLabel("right",2,0);
-	hero.setLabel("up",3,0);
-	hero.setLabel("left_down",4,0);
-	hero.setLabel("right_down",5,0);
-	hero.setLabel("left_up",6,0);
-	hero.setLabel("right_up",7,0);
-	hero.x = (w - 70)*0.5;
-	hero.y = h - 92;
+	self.index = index;
+	self.list = {};
+	self.to = new LPoint(self.x,self.y);
+	self.roads = [];
+	self.layer = new LSprite();
+	self.addChild(self.layer);
+	self.layer.x = w*0.5-320*0.5;
+	self.layer.y = h*0.5-240*0.5 - 50;
 	self.w = w;
 	self.h = h;
-	self.to = new LPoint(self.x,self.y);
-	self.addChild(hero);
-	self.chara = hero;
-	self.roads = [];
-	self.stepIndex = 0;
-	self.stepCount = 4;
-	self.stepx = w/self.stepCount;
-	self.stepy = h/self.stepCount;
+	self.step = self.moveStep = 4;
+	self.moveBevelStep = self.moveStep*Math.sin(45*Math.PI/180);
+	self.moveBevelStep = (self.moveBevelStep*100 >>> 0)/100;
 	self.directionList = {
-		"-1,-1":Character.LEFT_UP,
-		"-1,0":Character.LEFT,
-		"-1,1":Character.LEFT_DOWN,
-		"0,-1":Character.UP,
-		"0,1":Character.DOWN,
-		"1,-1":Character.RIGHT_UP,
-		"1,0":Character.RIGHT,
-		"1,1":Character.RIGHT_DOWN
+		"-1,-1":CharacterDirection.LEFT_UP,
+		"-1,0":CharacterDirection.LEFT,
+		"-1,1":CharacterDirection.LEFT_DOWN,
+		"0,-1":CharacterDirection.UP,
+		"0,1":CharacterDirection.DOWN,
+		"1,-1":CharacterDirection.RIGHT_UP,
+		"1,0":CharacterDirection.RIGHT,
+		"1,1":CharacterDirection.RIGHT_DOWN
 	};
 	self.addEventListener(LEvent.ENTER_FRAME,self.onframe);
+	self.setActionDirection(CharacterAction.STAND,CharacterDirection.DOWN);
 }
-Character.DOWN = "down";
-Character.LEFT = "left";
-Character.RIGHT = "right";
-Character.UP = "up";
-Character.LEFT_DOWN = "left_down";
-Character.RIGHT_DOWN = "right_down";
-Character.LEFT_UP = "left_up";
-Character.RIGHT_UP = "right_up";
+Character.prototype.setActionDirection = function(action,direction){
+	var self = this;
+	if(self.action == action && self.direction == direction)return;
+	var key = action+"-"+direction;
+	if(!self.list[key]){
+		self.list[key] = new Action(self.index,action,direction);
+		self.layer.addChild(self.list[key]);
+	}
+	if(self.actionObject){
+		self.actionObject.visible = false;
+	}
+	self.actionObject = self.list[key];
+	self.actionObject.visible = true;
+	self.action = action;
+	self.direction = direction;
+};
 Character.prototype.changeAction = function(action){
 	var self = this;
-	hero.gotoAndPlay(action);
+	self.setActionDirection(action,self.direction);
+};
+Character.prototype.changeDirection = function(direction){
+	var self = this;
+	self.setActionDirection(self.action,direction);
+};
+Character.prototype.setMoveDirection = function(x,y){
+	var self = this;
+	var direction = self.directionList[x+","+y];
+	self.setActionDirection(CharacterAction.MOVE,direction);
 };
 Character.prototype.setCoordinate = function(x,y){
 	var self = this;
@@ -64,52 +85,52 @@ Character.prototype.setTo = function(){
 	self.to.x = road.x*self.w;
 	self.to.y = road.y*self.h;	
 };
-Character.prototype.setDirection = function(x,y){
-	var self = this;
-	var direction = self.directionList[x+","+y];
-	if(direction == self.direction)return;
-	self.direction = direction;
-	self.changeAction(self.direction);
+Character.prototype.getValue = function(v1,v2){
+	if(v1 == v2)return 0;
+	return v1 < v2 ? 1 : -1;
 };
 Character.prototype.move = function(){
 	var self = this;
-	var x=0,y=0;
-	if(self.x > self.to.x){
-		self.x -= self.stepx;
-		x = -1;
-	}else if(self.x < self.to.x){
-		self.x += self.stepx;
-		x = 1;
+	if(self.x == self.to.x && self.y == self.to.y)return;
+	
+	if(self.x != self.to.x && self.y != self.to.y){
+		self.step = self.moveBevelStep;
+	}else{
+		self.step = self.moveStep;
 	}
-	if(self.y > self.to.y){
-		self.y -= self.stepy;
-		y = -1;
-	}else if(self.y < self.to.y){
-		self.y += self.stepy;
-		y = 1;
+	var mx = self.getValue(self.x , self.to.x),my = self.getValue(self.y , self.to.y);
+	self.x += self.step*mx;
+	self.y += self.step*my;
+	var cx = self.getValue(self.x , self.to.x),cy = self.getValue(self.y , self.to.y);
+	if(mx != cx || my != cy){
+		if(self.roads.length == 0){
+			self.x = self.to.x;
+			self.y = self.to.y;
+			self.changeAction(CharacterAction.STAND);
+			self.parent.parent.parent.controller.mapMove();
+			return;
+		}
+		var next = self.roads[0];
+		var nx = self.getValue(self.to.x , next.x),ny = self.getValue(self.to.y , next.y);
+		if(mx != nx || my != ny){
+			self.x = self.to.x;
+			self.y = self.to.y;
+		}
+		if(self.roads.length > 0){
+			self.setTo();
+		}
+		
 	}
-	if(x != 0 || y != 0){
-		self.setDirection(x,y);
-		self.parent.parent.parent.controller.mapMove();
-	}
-	self.stepIndex++;
-	if(self.stepIndex >= self.stepCount){
-		self.stepIndex = 0;
-		self.to.x = self.x;
-		self.to.y = self.y;
-	}
+	self.setMoveDirection(mx,my);
+	self.parent.parent.parent.controller.mapMove();
 };
 Character.prototype.onframe = function(event){
 	var self = event.target;
-	if(self.to.x == self.x && self.to.y == self.y){
-		if(self.roads.length == 0)return;
-		self.setTo();	
-	}else{
-		self.move();
-	}
+	self.move();
 };
 Character.prototype.setRoad = function(list){
 	var self = this;
 	self.roads = list;
+	if(self.to.x == self.x && self.to.y == self.y)self.setTo();
 };
 

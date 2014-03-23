@@ -14,7 +14,7 @@ MapController.prototype.imagesLoad = function(){
 };
 MapController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["Character","LStarQuery"],self.init);
+	self.load.library(["Action","Character","LStarQuery"],self.init);
 };
 MapController.prototype.init = function(){
 	var self = this;
@@ -53,8 +53,8 @@ MapController.prototype.mapMove=function(){
 		self.view.charaLayer.y = 0;
 	}
 	//保持其他层的坐标和人物层一致
-	self.view.mapLayer.x = self.view.gridLayer.x = self.view.maskLayer.x = self.view.charaLayer.x;
-	self.view.mapLayer.y = self.view.gridLayer.y = self.view.maskLayer.y = self.view.charaLayer.y;
+	self.view.mapLayer.x = self.view.gridLayer.x = self.view.buildLayer.x = self.view.charaLayer.x;
+	self.view.mapLayer.y = self.view.gridLayer.y = self.view.buildLayer.y = self.view.charaLayer.y;
 };
 MapController.prototype.queryInit=function(){
 	var self = this;
@@ -87,11 +87,13 @@ MapController.prototype.testMinus = function(event){
 	var self = event.clickTarget.parent.parent.controller;
 	if(self.view.baseLayer.scaleX <= 0.5)return;
 	self.viewBaseLayerScale(-0.1);
+	self.mapMove();
 };
 MapController.prototype.testPlus = function(event){
 	var self = event.clickTarget.parent.parent.controller;
 	if(self.view.baseLayer.scaleX >= 1)return;
 	self.viewBaseLayerScale(0.1);
+	self.mapMove();
 };
 MapController.prototype.viewBaseLayerScale = function(num){
 	var self = this;
