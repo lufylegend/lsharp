@@ -1,9 +1,16 @@
-function Action(index,action,direction){
+function Action(index,action,direction,sizeW,sizeH){
 	var self = this;
 	base(self,LSprite,[]);
-	
-	var list = LGlobal.divideCoordinate(320,240,1,1);
-	var data = new LBitmapData(LMvc.datalist["chara-default"],0,0,320,240);
+	if(typeof sizeW == UNDEFINED){
+		sizeW = 320;
+	}
+	if(typeof sizeH == UNDEFINED){
+		sizeH = 240;
+	}
+	self.sizeW = sizeW;
+	self.sizeH = sizeH;
+	var data = new LBitmapData(LMvc.datalist["chara-default"]);
+	var list = LGlobal.divideCoordinate(data.width,data.height,1,1);
 	self.anime = new LAnimationTimeline(data,list);
 	self.anime.speed = 1;
 	self.addChild(self.anime);
@@ -15,8 +22,8 @@ function Action(index,action,direction){
 Action.prototype.loadOver = function(event){
 	var self = event.target.parent;
 	var bitmapData = new LBitmapData(event.currentTarget);
-	var list = LGlobal.divideCoordinate(bitmapData.width,240,1,bitmapData.width/320 >>> 0);
-	bitmapData.setProperties(0,0,320,240);
+	var list = LGlobal.divideCoordinate(bitmapData.width,self.sizeH,1,bitmapData.width/self.sizeW >>> 0);
+	bitmapData.setProperties(0,0,self.sizeW,self.sizeH);
 	self.anime.bitmap.bitmapData = bitmapData;
 	self.anime.imageArray = list;
 };

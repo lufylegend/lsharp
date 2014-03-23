@@ -12,6 +12,7 @@ RPGCharacter.add(2,stand,down,52,13,false);
 RPGCharacter.add(3,stand,down,60,15,false);
 RPGCharacter.add(4,stand,up,35,40,false);
 RPGCharacter.add(5,stand,left,35,7,false);
+RPGCharacter.add(8,stand,down,55,25,false);
 //RPG地图初始化结束
 initialization.end;
 //RPG地图中各函数初始化开始
@@ -24,8 +25,18 @@ function mapR02();
 endfunction;
 //函数名称为“characterclick”+人物序号的函数，功能是当点击到某人物的时候，会调用相应的函数
 function characterclick2();
-	RPGTalk.set(2,0,你知道lufy吗，听说那家伙除了做游戏，啥都不会。);
-	RPGTalk.set(1,0,怪不得啊，哈哈哈。);
+	if(@task1000==1);  
+		RPGTalk.set(2,0,你知道lufy吗，听说那家伙除了做游戏，啥都不会。);
+		RPGTalk.set(1,0,怪不得啊，哈哈哈。);
+	elseif(@task1001==1);  
+		RPGTalk.set(2,0,《天书残卷》交给酒店老板了吗？); 
+	else;  
+		RPGTalk.set(2,0,这本《天书残卷》是我前两天从酒店老板那里借来的，你能帮我还回去吗？); 
+		RPGTalk.set(1,0,好啊，我正想去酒店喝点儿酒呢。);
+		RPGProps.add(2);
+		Var.set(task1001,1); 
+		RPGMessageBox.show(得到了《仙书残卷》。请到酒店把它交给酒店老板吧。);
+	endif; 
 endfunction;
 function characterclick3();
 	RPGTalk.set(3,0,。。。。。。);
@@ -38,6 +49,13 @@ endfunction;
 function characterclick5();
 	RPGTalk.set(5,0,你现在进入的是由lufylegend.js制作的一个虚幻的游戏脚本世界。目前正在执行是对话脚本。);
 endfunction;
+function characterclick8();
+	RPGTalk.set(1,0,哥们儿，你的形象不对啊。);
+	RPGTalk.set(8,0,路过而已，测试一下任意大小的图片是不是能用。);
+	RPGTalk.set(1,0,你能不能停下来？);
+	RPGTalk.set(8,0,停不下来，这个形象，八方向的图片只找到了跑的，没找到静止的。);
+	RPGTalk.set(1,0,我能说一声“靠”吗？);
+endfunction;
 //RPG地图中各函数初始化结束
 function.end;
 //RPG地图中实时判定部分
@@ -48,3 +66,15 @@ loop.end;
 //RPG地图设定结束
 RPGMap.end();
 RPGItem.add(entrance,44,28);
+if(@task1!=1);
+	RPGProps.add(1);
+	RPGProps.add(1);
+	RPGProps.add(3);
+	RPGProps.add(3);
+	RPGProps.add(3);
+	RPGProps.add(3);
+	RPGProps.add(3);
+	RPGProps.add(3);
+	RPGProps.add(3);
+	Var.set(task1,1); 
+endif;

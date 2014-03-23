@@ -43,6 +43,7 @@ MapModel.prototype.getImages=function(){
 	var self = this;
 	var list = [];
 	list.push({name:"talkbox",path:LMvc.IMG_PATH+"common/talkbox.png"});
+	list.push({name:"openmenu",path:LMvc.IMG_PATH+"menu/openmenu.png"});
 	list.push({name:"chara-default",path:LMvc.IMG_PATH+"character/chara-default.png"});
 	for(var i=0;i<self.map.imgs.length;i++){
 		for(var j=0;j<self.map.imgs[i].length;j++){

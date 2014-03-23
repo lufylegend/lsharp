@@ -8,8 +8,8 @@ function Talk(){
 	}
 }
 function TalkRun(layer,y,index,faceindex,msg,callback){
-	if(LGlobal.talkLayer && LGlobal.talkLayer.parent){
-		LGlobal.talkLayer.parent.removeChild(LGlobal.talkLayer);
+	if(LRPGObject.talkLayer && LRPGObject.talkLayer.parent){
+		LRPGObject.talkLayer.remove();
 	}
 	var talkLayer = new LSprite();
 	talkLayer.y = y;
