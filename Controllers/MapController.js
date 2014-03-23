@@ -18,7 +18,7 @@ MapController.prototype.libraryLoad=function(){
 };
 MapController.prototype.helperLoad=function(){
 	var self = this;
-	self.load.helper(["Talk"],self.libraryComplete);
+	self.load.helper(["GetButton","Talk"],self.libraryComplete);
 };
 MapController.prototype.libraryComplete=function(){
 	var self = this;
@@ -169,4 +169,18 @@ MapController.prototype.testGridShow = function(event){
 };
 MapController.prototype.addItem = function(name,x,y){
 	this.view.addItem(name,parseInt(x),parseInt(y));	
+};
+MapController.prototype.openmenuClick = function(){
+	var self = this;
+	self.loadMvc("Menu",self.openmenuComplete);	
+};
+MapController.prototype.openmenuComplete = function(){
+	var self = this;
+	var menu = new MenuController();
+	menu.baseView = self.view;
+	self.view.parent.addChild(menu.view);
+	//移动端的时候，为了提高效率，将地图隐藏
+	if(LGlobal.canTouch){
+		self.view.visible = false;
+	}
 };

@@ -83,7 +83,7 @@ LScript.prototype = {
 			return;
 		}
 		lineValue = ScriptVarlable.getVarlable(lineValue);
-		trace("analysis lineValue = " + lineValue);
+		trace("analysis lineValue e = " + lineValue);
 		var sarr = lineValue.split(".");
 		switch(sarr[0]){
 			case "Load":
@@ -561,7 +561,7 @@ ScriptVarlable.getVarlable = function (str){
 	var eStr;
 	var vStr;
 	var result = "";
-	var r=/^([a-z]|[A-Z]|_)+$/;
+	var r=/^([a-z]|[A-Z]|[0-9]|_)+$/;
 	sIndex = str.indexOf("@");
 	while(sIndex >=0){
 		eIndex = str.indexOf("@",sIndex+1);
@@ -1225,9 +1225,35 @@ LScriptRPG.analysis = function (childType, lineValue){
 		case "RPGItem":
 			LRPGItemScript.analysis(lineValue);
 			break;
+		case "RPGProps":
+			LRPGPropsScript.analysis(lineValue);
+			break;
+		case "RPGMessageBox":
+			LRPGMessageBoxScript.analysis(lineValue);
+			break;
 		default:
 			LGlobal.script.analysis();
 	}
+};
+
+/*
+* LRPGMessageBoxScript.js
+**/
+LRPGMessageBoxScript = function(){};
+LRPGMessageBoxScript.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGMessageBox.show":
+			LRPGMessageBoxScript.show(value,start,end);
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+LRPGMessageBoxScript.show = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	MessageBox.show(params[0]);
 };
 /*
 * LRPGItemScript.js
@@ -1249,6 +1275,34 @@ LRPGItemScript.add = function (value,start,end){
 	if(LRPGObject.RPGMap){
 		LRPGObject.RPGMap.addItem.apply(LRPGObject.RPGMap,params);
 	}
+	LGlobal.script.analysis();
+};
+/*
+* LRPGPropsScript.js
+**/
+LRPGPropsScript = function(){};
+LRPGPropsScript.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGProps.add":
+			LRPGPropsScript.add(value,start,end);
+			break;
+		case "RPGProps.remove":
+			LRPGPropsScript.remove(value,start,end);
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+LRPGPropsScript.add = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	LRPGObject.addProps(params[0]);
+	LGlobal.script.analysis();
+};
+LRPGPropsScript.remove = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	LRPGObject.removeProps(params[0]);
 	LGlobal.script.analysis();
 };
 /*

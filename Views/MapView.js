@@ -10,9 +10,21 @@ MapView.prototype.init=function(){
 	self.mapLayerInit();
 	self.gridLayerInit();
 	self.buildLayerInit();
+	self.menuLayerInit();
 	self.testCtrlLayerInit();
 	
 	self.controller.queryInit();
+};
+MapView.prototype.menuLayerInit=function(){
+	var self = this;
+	
+	var openmenuButton = GetButton(LMvc.datalist["openmenu"],null,0);
+	openmenuButton.x = LGlobal.width - openmenuButton.getWidth();
+	openmenuButton.y = 0;
+	self.addChild(openmenuButton);
+	openmenuButton.addEventListener(LMouseEvent.MOUSE_UP, function(){
+		self.controller.openmenuClick();
+	});
 };
 /**
  * 建筑层实现

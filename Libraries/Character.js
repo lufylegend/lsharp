@@ -24,13 +24,21 @@ function Character(index,w,h,action,direction){
 	self.addChild(self.layer);
 	self.layer.x = w*0.5-320*0.5;
 	self.layer.y = h*0.5-240*0.5 - 50;
+	self.layer.x = w*0.5;
+	self.layer.y = h*0.5;
+	var r = self.data.RRect;
+	self.layer.x = w*0.5 - (r[0]+r[2]*0.5);
+	self.layer.y = h*0.5 -r[3] - r[1];
+	if(LGlobal.traceDebug){
+		self.layer.graphics.drawRect(1,"#000000",r);
+	}
 	self.w = w;
 	self.h = h;
 	self.step = self.moveStep = 4;
 	self.moveBevelStep = self.moveStep*Math.sin(45*Math.PI/180);
 	self.moveBevelStep = (self.moveBevelStep*100 >>> 0)/100;
 	
-	self.rect = [-10,-65,30,25];
+	self.rect = [w*0.5-r[2]*0.5,h*0.5-r[3],w*0.5+r[2]*0.5,h*0.5];
 	
 	self.directionList = {
 		"-1,-1":CharacterDirection.LEFT_UP,
@@ -61,7 +69,7 @@ Character.prototype.setActionDirection = function(action,direction){
 	if(self.action == action && self.direction == direction)return;
 	var key = action+"-"+direction;
 	if(!self.list[key]){
-		self.list[key] = new Action(self.data["R"],action,direction);
+		self.list[key] = new Action(self.data["R"],action,direction,self.data.RWidth,self.data.RHeight);
 		self.layer.addChild(self.list[key]);
 	}
 	if(self.actionObject){

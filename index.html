@@ -23,7 +23,8 @@
         init(1000/40,"mvclegend",800,480,main);
         //init(40,"mvclegend",5120,240,main);
 		var loadData = [
-				{name:"chara",path:"./script/initialization/chara.json",type:"text"}
+				{name:"chara",path:"./script/initialization/chara.json",type:"text"},
+				{name:"props",path:"./script/initialization/props.json",type:"text"}
 		];
 		function main(){
 			LGlobal.setDebug(true);
@@ -49,6 +50,7 @@
 					removeChild(loadingLayer);
 					loadingLayer = null;
 					LMvc.datalist["chara"] = JSON.parse(result["chara"]);
+					LMvc.datalist["props"] = JSON.parse(result["props"]);
 					LMvc.init();
 				}
 			);
