@@ -4,9 +4,24 @@ function MapModel(){
 MapModel.prototype.construct=function(){
 	this.map = null;
 };
+MapModel.prototype.loadMapFile=function(mapPath){
+	var self = this;
+	//开始读取战场地图文件
+	var urlloader = new LURLLoader();
+	urlloader.parent = self;
+	urlloader.addEventListener(LEvent.COMPLETE,self.loadMapFileOver);
+	urlloader.load("./script/maps/"+mapPath+(LGlobal.traceDebug?("?"+(new Date()).getTime()):""),"text");
+};
+MapModel.prototype.loadMapFileOver=function(event){
+	var self = event.target.parent;
+	//保存战场地图文件内容
+	self.map = JSON.parse(event.target.data);
+	self.controller.loadMapFileOver();
+};
 MapModel.prototype.getImages=function(){
 	var self = this;
 	var list = [];
+	list.push({name:"talkbox",path:LMvc.IMG_PATH+"common/talkbox.png"});
 	list.push({name:"chara-default",path:LMvc.IMG_PATH+"character/chara-default.png"});
 	for(var i=0;i<self.map.imgs.length;i++){
 		for(var j=0;j<self.map.imgs[i].length;j++){
@@ -21,7 +36,6 @@ MapModel.prototype.getImages=function(){
 			list.push({name:imgObj.img,path:LMvc.IMG_PATH+"map/"+imgObj.path});
 		}
 	}
-	//list.push({name:self.map.build.img,path:LMvc.IMG_PATH+"map/"+self.map.build.path});
 	return list;
 };
 MapModel.prototype.setMapFiles=function(){

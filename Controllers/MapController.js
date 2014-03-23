@@ -3,23 +3,45 @@ function MapController(){
 }
 MapController.prototype.construct=function(){
 	var self = this;
+	self.initOver = false;
 	LMvc.keepLoading(true);
-	self.model.setMapFiles();
-	self.imagesLoad();
+	self.libraryLoad();
 };
 MapController.prototype.imagesLoad = function(){
 	var self = this;
 	var list = self.model.getImages();
-	self.load.image(list,self.libraryLoad);
+	self.load.image(list,self.init);
 };
 MapController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["Action","Character","LStarQuery"],self.init);
+	self.load.library(["Action","Character","LStarQuery","Face"],self.helperLoad);
+};
+MapController.prototype.helperLoad=function(){
+	var self = this;
+	self.load.helper(["Talk"],self.libraryComplete);
+};
+MapController.prototype.libraryComplete=function(){
+	var self = this;
+	LRPGMapScript.analysis();
+};
+MapController.prototype.addMap=function(mapPath){
+	var self = this;
+	self.model.loadMapFile(mapPath,self.loadMapFileOver);
+};
+MapController.prototype.loadMapFileOver=function(){
+	var self = this;
+	self.imagesLoad();
+};
+MapController.prototype.addCharacter=function(index,action,direction,x,y,ishero){
+	var self = this;
+	self.view.addCharaLayer(index,action,direction,x,y,ishero);
+	LRPGMapScript.initialization();
 };
 MapController.prototype.init = function(){
 	var self = this;
 	LMvc.keepLoading(false);
 	self.view.init();
+	LRPGMapScript.initialization();
 };
 MapController.prototype.mapMove=function(){
 	var self = this;
@@ -55,6 +77,8 @@ MapController.prototype.mapMove=function(){
 	//保持其他层的坐标和人物层一致
 	self.view.mapLayer.x = self.view.gridLayer.x = self.view.buildLayer.x = self.view.charaLayer.x;
 	self.view.mapLayer.y = self.view.gridLayer.y = self.view.buildLayer.y = self.view.charaLayer.y;
+	//排序
+    self.view.charaLayer.childList =  self.view.charaLayer.childList.sort(function(a,b){return a.y > b.y;});
 };
 MapController.prototype.queryInit=function(){
 	var self = this;
@@ -75,12 +99,32 @@ MapController.prototype.queryInit=function(){
 };
 MapController.prototype.mapClick = function(event){
 	var self = event.clickTarget.parent.parent.controller;
+	if(!self.initOver)return;
+	if(LRPGObject.talkLayer){
+		if(LRPGObject.talkOver){
+			TalkRemove();
+		}
+		return;
+	}
+	self.characterClick(event.selfX,event.selfY);
 	var coordinate = self.view.hero.getTo();
 	var fx = coordinate[0] , fy = coordinate[1];
 	var cx = event.selfX/self.view.baseLayer.scaleX/self.stepWidth >>> 0 , cy = event.selfY/self.view.baseLayer.scaleY/self.stepHeight >>> 0;
 	var returnList = self.query.queryPath(new LPoint(fx,fy),new LPoint(cx,cy));
 	if(returnList.length > 0){
 		self.view.hero.setRoad(returnList);
+	}
+};
+MapController.prototype.characterClick = function(cx,cy){
+	var self = this;
+	var childList = self.view.charaLayer.childList,child;
+	for(var i=0,l=childList.length;i<l;i++){
+		child = childList[i];
+		if(self.view.hero && self.view.hero.index == child.index)continue;
+		if(child.histTestOn(cx - child.x,cy - child.y)){
+			ScriptFunction.analysis("Call.characterclick"+child.index + "();");
+			return;
+		}
 	}
 };
 MapController.prototype.testMinus = function(event){

@@ -16,6 +16,7 @@ function Character(index,w,h){
 	var self = this;
 	base(self,LSprite,[]);
 	self.index = index;
+	self.data = LMvc.datalist["chara"]["peo"+self.index];
 	self.list = {};
 	self.to = new LPoint(self.x,self.y);
 	self.roads = [];
@@ -28,6 +29,9 @@ function Character(index,w,h){
 	self.step = self.moveStep = 4;
 	self.moveBevelStep = self.moveStep*Math.sin(45*Math.PI/180);
 	self.moveBevelStep = (self.moveBevelStep*100 >>> 0)/100;
+	
+	self.rect = [-10,-65,30,25];
+	
 	self.directionList = {
 		"-1,-1":CharacterDirection.LEFT_UP,
 		"-1,0":CharacterDirection.LEFT,
@@ -41,12 +45,16 @@ function Character(index,w,h){
 	self.addEventListener(LEvent.ENTER_FRAME,self.onframe);
 	self.setActionDirection(CharacterAction.STAND,CharacterDirection.DOWN);
 }
+Character.prototype.histTestOn = function(x,y){
+	var s = this.rect;
+	return x>=s[0] && x <= s[2] && y>= s[1] && y <= s[3];
+};
 Character.prototype.setActionDirection = function(action,direction){
 	var self = this;
 	if(self.action == action && self.direction == direction)return;
 	var key = action+"-"+direction;
 	if(!self.list[key]){
-		self.list[key] = new Action(self.index,action,direction);
+		self.list[key] = new Action(self.data["R"],action,direction);
 		self.layer.addChild(self.list[key]);
 	}
 	if(self.actionObject){

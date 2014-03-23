@@ -8,7 +8,6 @@ MapView.prototype.init=function(){
 	self.graphics.drawRect(0,"#000000",[0, 0, LGlobal.width, LGlobal.height],true,"#000000");
 	self.layerInit();
 	self.mapLayerInit();
-	self.charaLayerInit();
 	self.gridLayerInit();
 	self.buildLayerInit();
 	self.testCtrlLayerInit();
@@ -33,20 +32,20 @@ MapView.prototype.buildLayerInit=function(){
 	}
 };
 /**
- * 人物层实现
- * 暂时设定一个可控制的角色,后面会将这里全部脚本化
+ * 添加人物
  * */
-MapView.prototype.charaLayerInit=function(){
+MapView.prototype.addCharaLayer=function(index,action,direction,x,y,ishero){
 	var self = this;
 	var map = self.model.map;
 	var grids = map.data;
 	var stepWidth = map.width/grids[0].length;
 	var stepHeight = map.height/grids.length;
 	
-	var chara = new Character(1,stepWidth,stepHeight);
-	chara.setCoordinate(20*stepWidth,8*stepHeight);
+	var chara = new Character(index,stepWidth,stepHeight);
+	chara.setActionDirection(action,direction);
+	chara.setCoordinate(parseInt(x)*stepWidth,parseInt(y)*stepHeight);
 	self.charaLayer.addChild(chara);
-	self.hero = chara;
+	if(JSON.parse(ishero))self.hero = chara;
 };
 /**
  * 测试层实现
