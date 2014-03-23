@@ -10,13 +10,31 @@ MapView.prototype.init=function(){
 	self.mapLayerInit();
 	self.charaLayerInit();
 	self.gridLayerInit();
+	self.buildLayerInit();
 	self.testCtrlLayerInit();
 	
 	self.controller.queryInit();
 };
 /**
+ * 建筑层实现
+ * */
+MapView.prototype.buildLayerInit=function(){
+	var self = this;
+	//获取地图定义
+	var map = self.model.map;
+	for(var i=0;i<map.builds.length;i++){
+		for(var j=0;j<map.imgs[i].length;j++){
+			var imgObj = map.builds[i][j];
+			var bitmap = new LBitmap(new LBitmapData(LMvc.datalist[imgObj.img],imgObj.rect[0],imgObj.rect[1],map.pieceWidth,map.pieceHeight));
+			bitmap.x = j*map.pieceWidth;
+			bitmap.y = i*map.pieceHeight;
+			self.buildLayer.addChild(bitmap);
+		}
+	}
+};
+/**
  * 人物层实现
- * 暂时设定一个可控制的角色
+ * 暂时设定一个可控制的角色,后面会将这里全部脚本化
  * */
 MapView.prototype.charaLayerInit=function(){
 	var self = this;
@@ -25,7 +43,7 @@ MapView.prototype.charaLayerInit=function(){
 	var stepWidth = map.width/grids[0].length;
 	var stepHeight = map.height/grids.length;
 	
-	var chara = new Character(LMvc.datalist["hero"],stepWidth,stepHeight);
+	var chara = new Character(1,stepWidth,stepHeight);
 	chara.setCoordinate(20*stepWidth,8*stepHeight);
 	self.charaLayer.addChild(chara);
 	self.hero = chara;
@@ -136,9 +154,12 @@ MapView.prototype.layerInit=function(){
 	self.charaLayer = new LSprite();
 	self.baseLayer.addChild(self.charaLayer);
 	//遮挡层
-	self.maskLayer = new LSprite();
-	self.baseLayer.addChild(self.maskLayer);
+	self.buildLayer = new LSprite();
+	self.baseLayer.addChild(self.buildLayer);
 	
 	self.testCtrlLayer = new LSprite();
 	self.addChild(self.testCtrlLayer);
+	var f = new FPS();
+	self.addChild(f);
+	
 };
