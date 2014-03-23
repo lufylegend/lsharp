@@ -1,0 +1,37 @@
+{
+"peo1":{
+	"Index":1,
+	"Name":"刘备",
+	"Face":1,
+	"R":1,
+	"Introduction":"刘备即蜀汉昭烈帝，字玄德，汉中山靖王刘胜的后代，三国时期蜀汉开国皇帝。"
+	},
+"peo2":{
+	"Index":2,
+	"Name":"关羽",
+	"Face":2,
+	"R":2,
+	"Introduction":"关羽本字长生，后改字云长。东汉末年著名将领，自刘备于乡里聚众起兵开始追随刘备，是刘备的结义兄弟，也是刘备最为信任的将领之一。"
+	},
+"peo3":{
+	"Index":3,
+	"Name":"武将1",
+	"Face":3,
+	"R":3,
+	"Introduction":"武将1"
+	},
+"peo4":{
+	"Index":4,
+	"Name":"武将2",
+	"Face":3,
+	"R":3,
+	"Introduction":"武将2"
+	},
+"peo5":{
+	"Index":5,
+	"Name":"武将3",
+	"Face":3,
+	"R":3,
+	"Introduction":"武将3"
+	}
+}

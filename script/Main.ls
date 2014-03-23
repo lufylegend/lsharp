@@ -1,0 +1,23 @@
+//添加显示层back
+Layer.add(-,back,0,0);
+Layer.drawRectLine(back,0,0,800,480,#000000);
+//显示文字，读取中
+Text.label(-,loading,图片读取中...,300,200,15,#000000);
+//读取图片
+Load.img(logobtnover,./images/logo/logobtnover.png);
+Load.img(logobtnup,./images/logo/logobtnup.png);
+Load.img(logo,./images/logo/logo.jpg);
+//删除文字，读取中
+Text.remove(loading);
+Img.add(back,logo01,logo,0,0,800,480,1);
+//显示游戏名称
+Text.label(back,logo,RPG脚本测试,470,50,40,#000000);
+//在select层上添加两个按钮，作为选项
+Button.add(back,btn01,游戏开始,500,150,logobtnup,logobtnover,logobtnover,#ffffff);
+function btn01click();
+	Button.remove(btn01);
+	Text.label(-,loading,脚本读取中...,300,200,20,#ffffff);
+	Load.script(script/R01.ls);
+endfunction;
+//为按钮添加点击事件
+Button.mousedown(btn01,btn01click);

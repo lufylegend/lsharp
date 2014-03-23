@@ -1,6 +1,7 @@
 function Action(index,action,direction){
 	var self = this;
 	base(self,LSprite,[]);
+	
 	var list = LGlobal.divideCoordinate(5120,240,1,16);
 	var data = new LBitmapData(LMvc.datalist["chara-default"],0,0,320,240);
 	self.anime = new LAnimationTimeline(data,list);
