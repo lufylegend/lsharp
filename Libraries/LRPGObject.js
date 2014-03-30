@@ -38,3 +38,26 @@ LRPGObject.removeProps = function(index){
 		}
 	}
 };
+LRPGObject.memberList = [];
+LRPGObject.addMember = function(index){
+	var characterData = LMvc.datalist["chara"]["peo"+index],i,l,chara;
+	if(!characterData)return;
+	for(i=0,l=LRPGObject.memberList.length;i<l;i++){
+		chara = LRPGObject.memberList[i];
+		if(chara.index() == characterData.Index){
+			return;
+		}
+	}
+	LRPGObject.memberList.push(new MemberData(characterData));
+};
+LRPGObject.removeMember = function(index){
+	var characterData = LMvc.datalist["chara"]["peo"+index],i,l,chara;
+	if(!characterData)return;
+	for(i=LRPGObject.memberList.length - 1;i>=0;i--){
+		chara = LRPGObject.memberList[i];
+		if(chara.index() == characterData.Index){
+			LRPGObject.memberList.splice(i,1);
+			break;
+		}
+	}
+};

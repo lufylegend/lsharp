@@ -41,3 +41,14 @@ MenuController.prototype.backpackComplete = function(){
 	self.view.parent.addChild(backpack.view);
 	self.view.remove();
 };
+MenuController.prototype.showPeople = function(){
+	var self = this;
+	self.loadMvc("People",self.peopleComplete);	
+};
+MenuController.prototype.peopleComplete = function(){
+	var self = this;
+	var people = new PeopleController();
+	people.baseView = self.baseView;
+	self.view.parent.addChild(people.view);
+	self.view.remove();
+};
