@@ -1228,6 +1228,9 @@ LScriptRPG.analysis = function (childType, lineValue){
 		case "RPGProps":
 			LRPGPropsScript.analysis(lineValue);
 			break;
+		case "RPGMember":
+			LRPGMemberScript.analysis(lineValue);
+			break;
 		case "RPGMessageBox":
 			LRPGMessageBoxScript.analysis(lineValue);
 			break;
@@ -1275,6 +1278,34 @@ LRPGItemScript.add = function (value,start,end){
 	if(LRPGObject.RPGMap){
 		LRPGObject.RPGMap.addItem.apply(LRPGObject.RPGMap,params);
 	}
+	LGlobal.script.analysis();
+};
+/*
+* LRPGMemberScript.js
+**/
+LRPGMemberScript = function(){};
+LRPGMemberScript.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGMember.add":
+			LRPGMemberScript.add(value,start,end);
+			break;
+		case "RPGMember.remove":
+			LRPGMemberScript.remove(value,start,end);
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+LRPGMemberScript.add = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	LRPGObject.addMember(params[0]);
+	LGlobal.script.analysis();
+};
+LRPGMemberScript.remove = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	LRPGObject.removeMember(params[0]);
 	LGlobal.script.analysis();
 };
 /*

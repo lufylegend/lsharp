@@ -14,7 +14,7 @@ MapController.prototype.imagesLoad = function(){
 };
 MapController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["Action","Character","LStarQuery","Face","Items/Entrance"],self.helperLoad);
+	self.load.library(["character/Action","character/Character","character/Face","LStarQuery","Items/Entrance"],self.helperLoad);
 };
 MapController.prototype.helperLoad=function(){
 	var self = this;

@@ -16,7 +16,7 @@ IndexController.prototype.helperLoad=function(){
 };
 IndexController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["window/WindowBackground","props/PropsRecovery","props/PropsSpecial","props/PropsWeaponry","LRPGObject","button/ButtonSelect"],self.libraryComplete);
+	self.load.library(["window/WindowBackground","props/PropsRecovery","props/PropsSpecial","props/PropsWeaponry","LRPGObject","button/ButtonSelect","character/MemberData"],self.libraryComplete);
 };
 IndexController.prototype.libraryComplete=function(){
 	var self = this;

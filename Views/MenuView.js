@@ -54,6 +54,11 @@ MenuView.prototype.menuInit=function(){
 	people.x = startX + xindex*step;
 	people.y = startY + yindex*step;
 	self.menuLayer.addChild(people);
+	people.addEventListener(LMouseEvent.MOUSE_UP, function(event){
+		LTweenLite.to(self.menuLayer,0.3,{x:LGlobal.width,onComplete:function(){
+			self.controller.showPeople();
+		}});
+	});
 	xindex++;
 	var task = new ButtonText("task","任务",true);
 	task.x = startX + xindex*step;
