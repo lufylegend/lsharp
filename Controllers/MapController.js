@@ -14,7 +14,7 @@ MapController.prototype.imagesLoad = function(){
 };
 MapController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["character/Action","character/Character","character/Face","LStarQuery","Items/Entrance"],self.helperLoad);
+	self.load.library(["character/Action","character/Character","character/Face","LStarQuery","Items/Entrance","BitmapSprite"],self.helperLoad);
 };
 MapController.prototype.helperLoad=function(){
 	var self = this;
@@ -183,4 +183,16 @@ MapController.prototype.openmenuComplete = function(){
 	if(LGlobal.canTouch){
 		self.view.visible = false;
 	}
+};
+MapController.prototype.showBattle = function(battleIndex){
+	var self = this;
+	LRPGObject.battleIndex = battleIndex;
+	self.loadMvc("Battlemap",self.showBattleComplete);	
+};
+MapController.prototype.showBattleComplete = function(){
+	var self = this;
+	var battlemap = new BattlemapController();
+	battlemap.baseView = self.view;
+	self.view.parent.addChild(battlemap.view);
+	self.view.visible = false;
 };

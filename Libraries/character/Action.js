@@ -1,4 +1,4 @@
-function Action(index,action,direction,sizeW,sizeH){
+function Action(index,action,direction,sizeW,sizeH,RS){
 	var self = this;
 	base(self,LSprite,[]);
 	if(typeof sizeW == UNDEFINED){
@@ -9,15 +9,32 @@ function Action(index,action,direction,sizeW,sizeH){
 	}
 	self.sizeW = sizeW;
 	self.sizeH = sizeH;
-	var data = new LBitmapData(LMvc.datalist["chara-default"]);
-	var list = LGlobal.divideCoordinate(data.width,data.height,1,1);
+	if(!RS)RS="R";
+	self.RS = RS;
+	var data,list;
+	if(self.RS == "R"){
+		data = new LBitmapData(LMvc.datalist["chara-default"]);
+		list = LGlobal.divideCoordinate(data.width,data.height,1,1);
+	}else if(self.RS == "S"){
+		data = new LBitmapData(LMvc.datalist["chara-default-"+action+"-"+CharacterDirection.RIGHT],0,0,self.sizeW,self.sizeH);
+		list = LGlobal.divideCoordinate(data.width,self.sizeH,1,data.width/self.sizeW >>> 0);
+	}
 	self.anime = new LAnimationTimeline(data,list);
 	self.anime.speed = 1;
+	if(self.RS == "S"){
+		self.anime.setAction(0,0,1,direction != CharacterDirection.RIGHT);
+		self.anime.addEventListener(LEvent.COMPLETE,self.oncomplete);
+		self.anime.speed = 4;
+	}
 	self.addChild(self.anime);
 	loader = new LLoader();
 	loader.parent = self;
 	loader.addEventListener(LEvent.COMPLETE,self.loadOver);
-	loader.load(LMvc.IMG_PATH+"character/"+index+"/"+action+"-"+direction+".png","bitmapData");
+	if(self.RS == "S"){
+		loader.load(LMvc.IMG_PATH+"character/"+index+"/"+(self.RS == "R"?"":"s/")+action+"-right.png","bitmapData");
+	}else{
+		loader.load(LMvc.IMG_PATH+"character/"+index+"/"+(self.RS == "R"?"":"s/")+action+"-"+direction+".png","bitmapData");
+	}
 }
 Action.prototype.loadOver = function(event){
 	var self = event.target.parent;
@@ -26,4 +43,13 @@ Action.prototype.loadOver = function(event){
 	bitmapData.setProperties(0,0,self.sizeW,self.sizeH);
 	self.anime.bitmap.bitmapData = bitmapData;
 	self.anime.imageArray = list;
+};
+Action.prototype.oncomplete = function(event){
+	var self = event.target.parent;
+	var charaLayer = self.parent;
+	if(!charaLayer)return;
+	var chara = charaLayer.parent;
+	if(!chara)return;
+	//console.log("chara.dispatchEvent(LEvent.COMPLETE);",chara);
+	chara.dispatchEvent(LEvent.COMPLETE);
 };

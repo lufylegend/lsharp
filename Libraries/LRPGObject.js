@@ -1,4 +1,5 @@
 var LRPGObject = {};
+LRPGObject.battleIndex = 1;
 LRPGObject.propsList = [];
 LRPGObject.addProps = function(index){
 	var propsData = LMvc.datalist["props"]["props"+index],i,l,props;
