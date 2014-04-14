@@ -1,7 +1,17 @@
-function MemberData(data){
+function MemberData(data,lv){
 	var self = this;
 	self.data = data;
+	if(lv)self.data.Lv = lv;
+	self.data.Attack = self.data.Force/2 + self.upValue(self.data.Force)*self.data.Lv;
+	self.data.Defense = self.data.Command/2 + self.upValue(self.data.Command)*self.data.Lv;
+	self.data.Morale = self.data.Luck/2 + self.upValue(self.data.Luck)*self.data.Lv;
 }
+MemberData.prototype.upValue = function(value){
+	if(value < 50)return 1;
+	if(value < 70)return 2;
+	if(value < 90)return 3;
+	return 4;
+};
 MemberData.prototype.face = function(){
 	return this.data.Face;
 };
@@ -12,12 +22,17 @@ MemberData.prototype.name = function(){
 	return this.data.Name;
 };
 MemberData.prototype.lv = function(){
-	return this.data.Lv;
+	return parseInt(this.data.Lv.toString());
 };
 MemberData.prototype.exp = function(){
 	return this.data.Exp;
 };
-MemberData.prototype.hp = function(){
+MemberData.prototype.hp = function(value){
+	if(typeof value != UNDEFINED){
+		this.data.HP = value;
+		if(this.data.HP < 0)this.data.HP = 0;
+		if(this.data.HP > self.maxHp())this.data.HP = self.maxHp();
+	}
 	return this.data.HP;
 };
 MemberData.prototype.maxHp = function(){
@@ -46,4 +61,16 @@ MemberData.prototype.agile = function(){
 };
 MemberData.prototype.luck = function(){
 	return this.data.Luck;
+};
+MemberData.prototype.skill = function(){
+	return this.data.Skill;
+};
+MemberData.prototype.attack = function(){
+	return this.data.Attack;
+};
+MemberData.prototype.defense = function(){
+	return this.data.Defense;
+};
+MemberData.prototype.morale = function(){
+	return this.data.Morale;
 };

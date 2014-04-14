@@ -206,6 +206,39 @@ CharacterProperty.prototype.abilityShow = function(){
 	luckText.x = luckLabel.x + 100;
 	luckText.y = luckLabel.y;
 	self.viewLayer.addChild(luckText);
+	
+	
+	var skillLabel = self.getText("特技：");
+	skillLabel.x = 250;
+	skillLabel.y = 170;
+	self.viewLayer.addChild(skillLabel);
+	if(!self.data.skill())return;
+	if(!LMvc.datalist["skill"]["skill"+self.data.skill()])return;
+	
+	var background2 = new WindowBackground(3,240,120);
+	background2.x = 250;
+	background2.y = 195;
+	self.viewLayer.addChild(background2);
+	
+	var skill = LMvc.datalist["skill"]["skill"+self.data.skill()];
+	var skillName = self.getText(skill.Name);
+	skillName.x = skillLabel.x + skillLabel.getWidth();
+	skillName.y = skillLabel.y;
+	self.viewLayer.addChild(skillName);
+	var skillIcon = new BitmapSprite("skill/icon/"+skill.Index+".png");
+	skillIcon.x = background2.x + 10;
+	skillIcon.y = background2.y + 10;
+	self.viewLayer.addChild(skillIcon);
+	var skillIntroduction = skill.Introduction;
+	skillIntroduction = skillIntroduction.replace("{Probability}",skill.Probability+"%");
+	skillIntroduction = skillIntroduction.replace("{HP}",skill.HP);
+	skillIntroduction = skillIntroduction.replace("{Addition}",skill.Addition+"%");
+	var skillIntroductionText = self.getText(skillIntroduction,"#000000",11);
+	skillIntroductionText.width = 110;
+	skillIntroductionText.setWordWrap(true,16);
+	skillIntroductionText.x = skillIcon.x + 103;
+	skillIntroductionText.y = skillIcon.y;
+	self.viewLayer.addChild(skillIntroductionText);
 };
 CharacterProperty.prototype.armsShow = function(){
 	var self = this;

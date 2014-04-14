@@ -1,6 +1,9 @@
 var CharacterAction = {
 	STAND:"stand",
-	MOVE:"move"
+	MOVE:"move",
+	ATTACK:"attack",
+	BLOCK:"block",
+	HERT:"hert"
 };
 var CharacterDirection = {
 	DOWN:"down",
@@ -12,21 +15,19 @@ var CharacterDirection = {
 	LEFT_UP:"left_up",
 	RIGHT_UP:"right_up"
 };
-function Character(index,w,h,action,direction){
+function Character(index,w,h,action,direction,RS){
 	var self = this;
 	base(self,LSprite,[]);
+	if(!RS)RS = "R";
 	self.index = index;
+	self.RS = RS;
 	self.data = LMvc.datalist["chara"]["peo"+self.index];
 	self.list = {};
 	self.to = new LPoint(self.x,self.y);
 	self.roads = [];
 	self.layer = new LSprite();
 	self.addChild(self.layer);
-	self.layer.x = w*0.5-320*0.5;
-	self.layer.y = h*0.5-240*0.5 - 50;
-	self.layer.x = w*0.5;
-	self.layer.y = h*0.5;
-	var r = self.data.RRect;
+	var r = self.data[self.RS+"Rect"];
 	self.layer.x = w*0.5 - (r[0]+r[2]*0.5);
 	self.layer.y = h*0.5 -r[3] - r[1];
 	if(LGlobal.traceDebug){
@@ -69,7 +70,7 @@ Character.prototype.setActionDirection = function(action,direction){
 	if(self.action == action && self.direction == direction)return;
 	var key = action+"-"+direction;
 	if(!self.list[key]){
-		self.list[key] = new Action(self.data["R"],action,direction,self.data.RWidth,self.data.RHeight);
+		self.list[key] = new Action(self.data[self.RS],action,direction,self.data[self.RS+"Width"],self.data[self.RS+"Height"],self.RS);
 		self.layer.addChild(self.list[key]);
 	}
 	if(self.actionObject){
@@ -155,7 +156,7 @@ Character.prototype.move = function(){
 			self.x = self.to.x;
 			self.y = self.to.y;
 			self.changeAction(CharacterAction.STAND);
-			controller.mapMove();
+			if(controller.mapMove)controller.mapMove();
 			self.checkCoordinate(controller);
 			return;
 		}
@@ -172,11 +173,12 @@ Character.prototype.move = function(){
 		
 	}
 	self.setMoveDirection(mx,my);
-	controller.mapMove();
+	if(controller.mapMove)controller.mapMove();
 };
 Character.prototype.onframe = function(event){
 	var self = event.target;
-	self.move();
+	
+	if(self.RS == "R")self.move();
 };
 Character.prototype.setRoad = function(list){
 	var self = this;

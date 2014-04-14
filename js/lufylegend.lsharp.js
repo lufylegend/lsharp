@@ -786,7 +786,6 @@ ScriptIF.getCheckStr = function (value,s){
 	arr[0] = LMath.trim(arr[0].replace('"',''));
 	arr[1] = LMath.trim(arr[1].replace('"',''));
 	
-	
 	return arr;
 };
 var ScriptLayer = function (){};
@@ -1234,11 +1233,30 @@ LScriptRPG.analysis = function (childType, lineValue){
 		case "RPGMessageBox":
 			LRPGMessageBoxScript.analysis(lineValue);
 			break;
+		case "RPGBattle":
+			LRPGBattleScript.analysis(lineValue);
+			break;
 		default:
 			LGlobal.script.analysis();
 	}
 };
 
+/*
+* LRPGBattleScript.js
+**/
+LRPGBattleScript = function(){};
+LRPGBattleScript.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGBattle.start":
+			var params = value.substring(start+1,end).split(",");
+			LRPGObject.RPGMap.showBattle.apply(LRPGObject.RPGMap,params);
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
 /*
 * LRPGMessageBoxScript.js
 **/
