@@ -12,12 +12,19 @@ Text.remove(loading);
 Img.add(back,logo01,logo,0,0,800,480,1);
 //显示游戏名称
 Text.label(back,logo,RPG脚本测试,470,50,40,#000000);
-//在select层上添加两个按钮，作为选项
+//按钮
 Button.add(back,btn01,游戏开始,500,150,logobtnup,logobtnover,logobtnover,#ffffff);
+Button.add(back,btn02,读取进度,500,200,logobtnup,logobtnover,logobtnover,#ffffff);
 function btn01click();
 	Button.remove(btn01);
 	Text.label(-,loading,脚本读取中...,300,200,20,#ffffff);
 	Load.script(script/R01.ls);
 endfunction;
+function btn02click();
+	Button.remove(btn01);
+	Text.label(-,loading,脚本读取中...,300,200,20,#ffffff);
+	RPGSetup.readGame();
+endfunction;
 //为按钮添加点击事件
 Button.mousedown(btn01,btn01click);
+Button.mousedown(btn02,btn02click);

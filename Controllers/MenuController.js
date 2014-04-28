@@ -52,3 +52,14 @@ MenuController.prototype.peopleComplete = function(){
 	self.view.parent.addChild(people.view);
 	self.view.remove();
 };
+MenuController.prototype.showSetup = function(){
+	var self = this;
+	self.loadMvc("Setup",self.setupComplete);	
+};
+MenuController.prototype.setupComplete = function(){
+	var self = this;
+	var setup = new SetupController();
+	setup.baseView = self.baseView;
+	self.view.parent.addChild(setup.view);
+	self.view.remove();
+};

@@ -152,6 +152,7 @@ function LScriptArray(){
 * ScriptLoad.js
 **/
 var ScriptLoad = function (){};
+ScriptLoad.scriptData = "";
 ScriptLoad.data = "";
 ScriptLoad.urlloader = null;
 ScriptLoad.analysis = function (value){
@@ -181,6 +182,7 @@ ScriptLoad.loadImgOver = function (event){
 	script.analysis();
 };
 ScriptLoad.loadScript = function (){
+	ScriptLoad.scriptData = ScriptLoad.data;
 	ScriptLoad.urlloader = new LURLLoader();
 	ScriptLoad.urlloader.addEventListener(LEvent.COMPLETE,ScriptLoad.loadScriptOver);
 	ScriptLoad.urlloader.load(ScriptLoad.data[0]+(LGlobal.traceDebug?("?"+(new Date()).getTime()):""),"text");
@@ -1236,11 +1238,29 @@ LScriptRPG.analysis = function (childType, lineValue){
 		case "RPGBattle":
 			LRPGBattleScript.analysis(lineValue);
 			break;
+		case "RPGSetup":
+			LRPGSetupScript.analysis(lineValue);
+			break;
 		default:
 			LGlobal.script.analysis();
 	}
 };
 
+/*
+* LRPGSetupScript.js
+**/
+LRPGSetupScript = function(){};
+LRPGSetupScript.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGSetup.readGame":
+			LRPGObject.readGame();
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
 /*
 * LRPGBattleScript.js
 **/
@@ -1397,7 +1417,16 @@ LRPGMapScript.analysis=function(){
 						childs[i].checkCoordinate(LRPGObject.RPGMap,true);
 					}
 				}
-				if(LRPGObject.RPGMap.view.hero && 
+				if(LRPGObject.gameReading){
+					LRPGObject.RPGMap.view.hero.setCoordinate(
+						parseInt(window.localStorage.getItem("LRPG.Character.x")),
+						parseInt(window.localStorage.getItem("LRPG.Character.y")));
+						LRPGObject.RPGMap.view.hero.setActionDirection(
+							window.localStorage.getItem("LRPG.Character.action"),
+							window.localStorage.getItem("LRPG.Character.direction")
+						);
+					LRPGObject.gameReading = false;
+				}else if(LRPGObject.RPGMap.view.hero && 
 					script.scriptArray.varList["x"] && script.scriptArray.varList["y"]){
 					LRPGObject.RPGMap.view.hero.setCoordinate(
 						parseInt(script.scriptArray.varList["x"])*LRPGObject.RPGMap.view.hero.w,
