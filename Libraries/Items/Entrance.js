@@ -7,8 +7,8 @@ function Entrance(){
 	loader.load(LMvc.IMG_PATH+"items/entrance.png","bitmapData");
 }
 Entrance.prototype.loadOver = function(event){
-	var self = event.target.parent;
-	var bitmapData = new LBitmapData(event.currentTarget,0,0,148,142);
+	var self = event.currentTarget.parent;
+	var bitmapData = new LBitmapData(event.target,0,0,148,142);
 	var list = LGlobal.divideCoordinate(444,142,1,3);
 	self.anime = new LAnimationTimeline(bitmapData,list);
 	self.anime.speed = 4;

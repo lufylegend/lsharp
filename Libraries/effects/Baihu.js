@@ -19,7 +19,7 @@ Baihu.prototype.run=function(){
 	self.addEventListener(LEvent.ENTER_FRAME, self.onframe);
 };
 Baihu.prototype.onframe=function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	if(self.speedIndex++<self.speed)return;
 	self.speedIndex = 0;
 	self.bitmap.bitmapData = new LBitmapData(LMvc.datalist["baihu-"+self.index]);
@@ -30,13 +30,13 @@ Baihu.prototype.onframe=function(event){
 	}
 };
 Baihu.prototype.attackFrame=function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	if(self.speedIndex++ <self.speed)return;
 	self.speedIndex = 0;
 	self.effect.onframe();
 };
 Baihu.prototype.onEffectComplete=function(event){
-	var self = event.target.parent;
+	var self = event.currentTarget.parent;
 	var obj = self.effectList[self.index];
 	self.index++;
 	if(self.index > self.length){

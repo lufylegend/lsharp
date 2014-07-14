@@ -187,7 +187,7 @@ ScriptLoad.loadScript = function (){
 };
 ScriptLoad.loadScriptOver = function (event){
 	var script = LGlobal.script;
-	var data = script.removeComment(event.target.data);
+	var data = script.removeComment(event.target);
 	if(ScriptLoad.urlloader.die)ScriptLoad.urlloader.die();
 	ScriptLoad.urlloader = null;
 	script.saveList();

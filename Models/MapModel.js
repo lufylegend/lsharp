@@ -15,9 +15,9 @@ MapModel.prototype.loadMapFile=function(mapPath){
 	urlloader.load("./script/maps/"+mapPath+(LGlobal.traceDebug?("?"+(new Date()).getTime()):""),"text");
 };
 MapModel.prototype.loadMapFileOver=function(event){
-	var self = event.target.parent;
+	var self = event.currentTarget.parent;
 	//保存战场地图文件内容
-	self.map = JSON.parse(event.target.data);
+	self.map = JSON.parse(event.target);
 	
 	var grids = self.map.data;
 	self.stepWidth = self.map.width/grids[0].length;

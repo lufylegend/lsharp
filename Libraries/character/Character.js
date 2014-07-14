@@ -176,7 +176,7 @@ Character.prototype.move = function(){
 	if(controller.mapMove)controller.mapMove();
 };
 Character.prototype.onframe = function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	
 	if(self.RS == "R")self.move();
 };
