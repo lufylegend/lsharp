@@ -25,7 +25,7 @@ function WindowBackground(index,w,h){
 	loader.load(LMvc.IMG_PATH+"window/"+src,"bitmapData");
 }
 WindowBackground.prototype.loadOver = function(event){
-	var self = event.target.parent,data = event.currentTarget,
+	var self = event.currentTarget.parent,data = event.target,
 	w = self.w,h = self.h,size = self.size,bitmapData,bitmap;
 	self.data = data;
 	//left up

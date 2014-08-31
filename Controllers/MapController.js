@@ -101,7 +101,7 @@ MapController.prototype.queryInit=function(){
 	self.query = query;
 };
 MapController.prototype.mapClick = function(event){
-	var self = event.clickTarget.parent.parent.controller;
+	var self = event.currentTarget.parent.parent.controller;
 	if(!self.initOver)return;
 	if(LRPGObject.talkLayer){
 		if(LRPGObject.talkOver){
@@ -109,15 +109,82 @@ MapController.prototype.mapClick = function(event){
 		}
 		return;
 	}
-	self.characterClick(event.selfX,event.selfY);
-	var coordinate = self.view.hero.getTo();
+	if(LRPGObject.runMode)return;
+	var onChara = self.characterClick(event.selfX,event.selfY);
+	if (onChara) return;
+	self.characterMoveTo(self.view.hero,event.selfX/self.stepWidth >>> 0,event.selfY/self.stepHeight >>> 0);
+};
+MapController.prototype.characterMoveToCharacter = function(chara,toChara,cx,cy,callback){
+	var self = this;
+	chara = self.getCharacter(chara);
+	toChara = self.getCharacter(toChara);
+	var coordinate = toChara.getTo();
+	self.characterMoveTo(chara,coordinate[0] + cx,coordinate[1] + cy,callback);
+};
+MapController.prototype.characterMove = function(chara,cx,cy,callback){
+	var self = this;
+	chara = self.getCharacter(chara);
+	self.characterMoveToCharacter(chara,chara,cx,cy,callback);
+};
+MapController.prototype.characterMoveTo = function(chara,cx,cy,callback){
+	var self = this;
+	chara = self.getCharacter(chara);
+	if(!chara)return;
+	if(chara.hasEventListener(Character.MOVE_COMPLETE)){
+		chara.removeEventListener(Character.MOVE_COMPLETE);
+	}
+	var coordinate = chara.getTo();
 	var fx = coordinate[0] , fy = coordinate[1];
-	var cx = event.selfX/self.view.baseLayer.scaleX/self.stepWidth >>> 0 , cy = event.selfY/self.view.baseLayer.scaleY/self.stepHeight >>> 0;
-	cx = event.selfX/self.stepWidth >>> 0 , cy = event.selfY/self.stepHeight >>> 0;
 	var returnList = self.query.queryPath(new LPoint(fx,fy),new LPoint(cx,cy));
 	if(returnList.length > 0){
-		self.view.hero.setRoad(returnList);
+		chara.setRoad(returnList);
+		if(callback){
+			chara.addEventListener(Character.MOVE_COMPLETE,callback);
+		}
 	}
+};
+MapController.prototype.setActionDirection = function(chara,action,direction,callback){
+	var self = this;
+	chara = self.getCharacter(chara);
+	if(LString.isInt(direction)){
+		var toChara = self.getCharacter(direction);
+		var coordinate = chara.getTo();
+		var coordinateTo = toChara.getTo();
+		var angle = Math.atan2(coordinateTo[1] - coordinate[1],coordinateTo[0] - coordinate[0])*180/Math.PI + 180;
+		if(angle <= 22.5 || angle >= 337.5){
+			direction = CharacterDirection.LEFT;
+		}else if(angle > 22.5 && angle <= 67.5){
+			direction = CharacterDirection.LEFT_UP;
+		}else if(angle > 67.5 && angle <= 112.5){
+			direction = CharacterDirection.UP;
+		}else if(angle > 112.5 && angle <= 157.5){
+			direction = CharacterDirection.RIGHT_UP;
+		}else if(angle > 157.5 && angle <= 202.5){
+			direction = CharacterDirection.RIGHT;
+		}else if(angle > 202.5 && angle <= 247.5){
+			direction = CharacterDirection.RIGHT_DOWN;
+		}else if(angle > 247.5 && angle <= 292.5){
+			direction = CharacterDirection.DOWN;
+		}else{
+			direction = CharacterDirection.LEFT_DOWN;
+		}
+	}
+	chara.setActionDirection(action,direction);
+	if(callback)callback();
+};
+MapController.prototype.getCharacter = function(value){
+	var self = this;
+	if(LString.isInt(value)){
+		var childList = self.view.charaLayer.childList,child;
+		for(var i=0,l=childList.length;i<l;i++){
+			child = childList[i];
+			if(value != child.index)continue;
+			return child;
+		}
+	}else if(typeof value == "object"){
+		return value;
+	}
+	return null;
 };
 MapController.prototype.characterClick = function(cx,cy){
 	var self = this;
@@ -127,10 +194,42 @@ MapController.prototype.characterClick = function(cx,cy){
 		if(self.view.hero && self.view.hero.index == child.index)continue;
 		if(child.histTestOn(cx - child.x,cy - child.y)){
 			ScriptFunction.analysis("Call.characterclick"+child.index + "();");
-			return;
+			return true;
 		}
 	}
+	return false;
 };
+MapController.prototype.addItem = function(name,x,y){
+	this.view.addItem(name,parseInt(x),parseInt(y));	
+};
+MapController.prototype.openmenuClick = function(){
+	var self = this;
+	self.loadMvc("Menu",self.openmenuComplete);	
+};
+MapController.prototype.openmenuComplete = function(){
+	var self = this;
+	var menu = new MenuController();
+	menu.baseView = self.view;
+	self.view.parent.addChild(menu.view);
+	//移动端的时候，为了提高效率，将地图隐藏
+	if(LGlobal.canTouch){
+		self.view.visible = false;
+	}
+};
+MapController.prototype.showBattle = function(battleIndex){
+	var self = this;
+	LRPGObject.battleIndex = battleIndex;
+	self.loadMvc("Battlemap",self.showBattleComplete);	
+};
+MapController.prototype.showBattleComplete = function(){
+	var self = this;
+	var battlemap = new BattlemapController();
+	battlemap.baseView = self.view;
+	self.view.parent.addChild(battlemap.view);
+	self.view.visible = false;
+};
+
+/*test code*/
 MapController.prototype.testMinus = function(event){
 	var self = event.clickTarget.parent.parent.controller;
 	if(self.view.baseLayer.scaleX <= 0.5)return;
@@ -167,32 +266,4 @@ MapController.prototype.testGridShow = function(event){
 	var self = event.clickTarget.parent.parent.controller;
 	self.view.gridLayer.visible = !self.view.gridLayer.visible;
 };
-MapController.prototype.addItem = function(name,x,y){
-	this.view.addItem(name,parseInt(x),parseInt(y));	
-};
-MapController.prototype.openmenuClick = function(){
-	var self = this;
-	self.loadMvc("Menu",self.openmenuComplete);	
-};
-MapController.prototype.openmenuComplete = function(){
-	var self = this;
-	var menu = new MenuController();
-	menu.baseView = self.view;
-	self.view.parent.addChild(menu.view);
-	//移动端的时候，为了提高效率，将地图隐藏
-	if(LGlobal.canTouch){
-		self.view.visible = false;
-	}
-};
-MapController.prototype.showBattle = function(battleIndex){
-	var self = this;
-	LRPGObject.battleIndex = battleIndex;
-	self.loadMvc("Battlemap",self.showBattleComplete);	
-};
-MapController.prototype.showBattleComplete = function(){
-	var self = this;
-	var battlemap = new BattlemapController();
-	battlemap.baseView = self.view;
-	self.view.parent.addChild(battlemap.view);
-	self.view.visible = false;
-};
+/*test code end*/

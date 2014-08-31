@@ -1,4 +1,5 @@
 var LRPGObject = {};
+LRPGObject.runMode = false;
 LRPGObject.battleIndex = 1;
 LRPGObject.propsList = [];
 LRPGObject.addProps = function(index){

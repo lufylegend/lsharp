@@ -18,8 +18,8 @@ function PropsIcon(props){
 	loader.load(LMvc.IMG_PATH+"props/"+props.icon+".png","bitmapData");
 }
 PropsIcon.prototype.loadOver = function(event){
-	var self = event.target.parent;
-	var bitmapData = new LBitmapData(event.currentTarget);
+	var self = event.currentTarget.parent;
+	var bitmapData = new LBitmapData(event.target);
 	var bitmap = new LBitmap(bitmapData);
 	bitmap.x = bitmap.y = 2;
 	bitmap.scaleX = bitmap.scaleY = 96/bitmap.getWidth();

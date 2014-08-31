@@ -187,7 +187,7 @@ ScriptLoad.loadScript = function (){
 };
 ScriptLoad.loadScriptOver = function (event){
 	var script = LGlobal.script;
-	var data = script.removeComment(event.target.data);
+	var data = script.removeComment(event.target);
 	if(ScriptLoad.urlloader.die)ScriptLoad.urlloader.die();
 	ScriptLoad.urlloader = null;
 	script.saveList();
@@ -1236,6 +1236,12 @@ LScriptRPG.analysis = function (childType, lineValue){
 		case "RPGBattle":
 			LRPGBattleScript.analysis(lineValue);
 			break;
+		case "RPGCharacter":
+			LRPGCharacter.analysis(lineValue);
+			break;
+		case "RPGRunMode":
+			LRPGRunMode.analysis(lineValue);
+			break;
 		default:
 			LGlobal.script.analysis();
 	}
@@ -1500,6 +1506,75 @@ LRPGMapScript.initialization=function(){
 		default:
 			LRPGMapScript.initialization();
 	}
+};
+/*
+ * LRPGRunMode.js
+ **/
+LRPGRunMode = function(){};
+LRPGRunMode.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	var params = value.substring(start+1,end).split(",");
+	switch(value.substr(0,start)){
+		case "RPGRunMode.set":
+			LRPGObject.runMode = (parseInt(params[0]) == 1);
+			LGlobal.script.analysis();
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+/*
+* LRPGCharacter.js
+**/
+LRPGCharacter = function(){};
+LRPGCharacter.analysis=function(value){
+	var start = value.indexOf("(");
+	var end = value.indexOf(")");
+	switch(value.substr(0,start)){
+		case "RPGCharacter.move"://进行相对坐标移动
+			LRPGCharacter.move(value,start,end);
+			break;
+		case "RPGCharacter.moveTo"://进行绝对坐标移动
+			LRPGCharacter.moveTo(value,start,end);
+			break;
+		case "RPGCharacter.moveToCharacter"://以某人物为参考物进行相对移动坐标
+			LRPGCharacter.moveToCharacter(value,start,end);
+			break;
+		case "RPGCharacter.changeAction":
+			LRPGCharacter.changeAction(value,start,end);
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+LRPGCharacter.changeAction = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	//params:index,action,direction
+	LRPGObject.RPGMap.setActionDirection.call(LRPGObject.RPGMap,params[0],params[1],params[2],LGlobal.script.analysis.bind(LGlobal.script));
+};
+LRPGCharacter.moveToCharacter = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	//params:index,index2,x,y
+	LRPGObject.RPGMap.characterMoveToCharacter.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),parseInt(params[3]),LGlobal.script.analysis.bind(LGlobal.script));
+};
+LRPGCharacter.move = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	var lineValue, callback = LGlobal.script.analysis.bind(LGlobal.script);
+	if(LGlobal.script.lineList.length > 0){
+		lineValue = LMath.trim(LGlobal.script.lineList[0]);
+		if(lineValue.indexOf("RPGCharacter.move") == 0){
+			callback = null;
+			LGlobal.script.analysis();
+		}
+	}
+	//params:index,x,y
+	LRPGObject.RPGMap.characterMove.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),callback);
+};
+LRPGCharacter.moveTo = function (value,start,end){
+	var params = value.substring(start+1,end).split(",");
+	//params:index,x,y
+	LRPGObject.RPGMap.characterMoveTo.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),LGlobal.script.analysis.bind(LGlobal.script));
 };
 /*
 *******************************************
