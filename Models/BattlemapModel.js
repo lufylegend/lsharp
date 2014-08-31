@@ -11,7 +11,7 @@ BattlemapModel.prototype.dataLoad=function(callback){
 	var urlloader = new LURLLoader();
 	urlloader.parent = self;
 	urlloader.addEventListener(LEvent.COMPLETE,function(event){
-		self.data = JSON.parse(event.currentTarget.data);
+		self.data = JSON.parse(event.target);
 		callback.apply(self.controller,[]);
 	});
 	urlloader.load("./script/battles/S"+LRPGObject.battleIndex+".ls"+(LGlobal.traceDebug?("?"+(new Date()).getTime()):""),"text");
