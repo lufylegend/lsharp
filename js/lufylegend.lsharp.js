@@ -1501,6 +1501,7 @@ LRPGMapScript.initialization=function(){
 			break;
 		case "RPGCharacter.add":
 			params = lineValue.substring(start+1,end).split(",");
+			params.push(LRPGMapScript.initialization.bind(LGlobal.script));
 			LRPGObject.RPGMap.addCharacter.apply(LRPGObject.RPGMap,params);
 			break;
 		default:
@@ -1543,6 +1544,16 @@ LRPGCharacter.analysis=function(value){
 			break;
 		case "RPGCharacter.changeAction":
 			LRPGCharacter.changeAction(value,start,end);
+			break;
+		case "RPGCharacter.add":
+			params = value.substring(start+1,end).split(",");
+			params.push(LGlobal.script.analysis.bind(LGlobal.script));
+			LRPGObject.RPGMap.addCharacter.apply(LRPGObject.RPGMap,params);
+			break;
+		case "RPGCharacter.remove":
+			params = value.substring(start+1,end).split(",");
+			params.push(LGlobal.script.analysis.bind(LGlobal.script));
+			LRPGObject.RPGMap.removeCharacter.apply(LRPGObject.RPGMap,params);
 			break;
 		default:
 			LGlobal.script.analysis();

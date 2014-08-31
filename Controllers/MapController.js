@@ -35,10 +35,15 @@ MapController.prototype.loadMapFileOver=function(){
 	var self = this;
 	self.imagesLoad();
 };
-MapController.prototype.addCharacter=function(index,action,direction,x,y,ishero){
+MapController.prototype.addCharacter=function(index,action,direction,x,y,ishero,callback){
 	var self = this;
 	self.view.addCharaLayer(index,action,direction,x,y,ishero);
-	LRPGMapScript.initialization();
+	if(typeof callback == "function")callback();
+};
+MapController.prototype.removeCharacter=function(index,callback){
+	var self = this;
+	self.view.removeCharaLayer(index);
+	if(typeof callback == "function")callback();
 };
 MapController.prototype.init = function(){
 	var self = this;
