@@ -148,7 +148,7 @@ MapController.prototype.characterMoveTo = function(chara,cx,cy,callback){
 		}
 	}
 };
-MapController.prototype.setActionDirection = function(chara,action,direction,callback){
+MapController.prototype.setActionDirection = function(chara,action,direction,loop,callback){
 	var self = this;
 	chara = self.getCharacter(chara);
 	if(LString.isInt(direction)){
@@ -175,7 +175,18 @@ MapController.prototype.setActionDirection = function(chara,action,direction,cal
 		}
 	}
 	chara.setActionDirection(action,direction);
-	if(callback)callback();
+	if(callback){
+		if(loop){
+			callback();
+		}else{
+			var fun = function(){
+				chara.actionObject.anime.stop();
+				chara.removeEventListener(LEvent.COMPLETE,fun);
+				callback();
+			};
+			chara.addEventListener(LEvent.COMPLETE,fun);
+		}
+	}
 };
 MapController.prototype.getCharacter = function(value){
 	var self = this;

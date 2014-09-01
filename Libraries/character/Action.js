@@ -23,9 +23,9 @@ function Action(index,action,direction,sizeW,sizeH,RS){
 	self.anime.speed = 2;
 	if(self.RS == "S"){
 		self.anime.setAction(0,0,1,direction != CharacterDirection.RIGHT);
-		self.anime.addEventListener(LEvent.COMPLETE,self.oncomplete);
 		self.anime.speed = 6;
 	}
+	self.anime.addEventListener(LEvent.COMPLETE,self.oncomplete);
 	self.addChild(self.anime);
 	loader = new LLoader();
 	loader.parent = self;
