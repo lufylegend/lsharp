@@ -17,7 +17,8 @@ Button.add(back,btn01,游戏开始,500,150,logobtnup,logobtnover,logobtnover,#ff
 function btn01click();
 	Button.remove(btn01);
 	Text.label(-,loading,脚本读取中...,300,200,20,#ffffff);
-	Load.script(script/R01.ls);
+	//Load.script(script/R01.ls);
+	Load.script(script/S/S01.ls);
 endfunction;
 //为按钮添加点击事件
 Button.mousedown(btn01,btn01click);
