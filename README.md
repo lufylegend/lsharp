@@ -39,5 +39,6 @@ L#
 3.5 | 游戏背包和任务系统 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/21942227)
 3.6 | 队员列表和人物属性 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/22661047)
 3.7 | 战斗系统之自动战斗(一) | [点击链接](http://blog.csdn.net/lufy_legend/article/details/23744323)
+3.8 | 通过脚本来自由控制游戏(一) | [点击链接](http://blog.csdn.net/lufy_legend/article/details/39011709)
 
 ####第四章 待定
