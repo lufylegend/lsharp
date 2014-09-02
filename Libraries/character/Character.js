@@ -35,7 +35,7 @@ function Character(index,w,h,action,direction,RS){
 	}
 	self.w = w;
 	self.h = h;
-	self.step = self.moveStep = 4;
+	self.step = self.moveStep = 2;
 	self.moveBevelStep = self.moveStep*Math.sin(45*Math.PI/180);
 	self.moveBevelStep = (self.moveBevelStep*100 >>> 0)/100;
 	
@@ -61,6 +61,7 @@ function Character(index,w,h,action,direction,RS){
 	}
 	self.setActionDirection(action,direction);
 }
+Character.MOVE_COMPLETE = "move_complete";
 Character.prototype.histTestOn = function(x,y){
 	var s = this.rect;
 	return x>=s[0] && x <= s[2] && y>= s[1] && y <= s[3];
@@ -158,6 +159,7 @@ Character.prototype.move = function(){
 			self.changeAction(CharacterAction.STAND);
 			if(controller.mapMove)controller.mapMove();
 			self.checkCoordinate(controller);
+			self.dispatchEvent(Character.MOVE_COMPLETE);
 			return;
 		}
 		var next = self.roads[0];
@@ -176,7 +178,7 @@ Character.prototype.move = function(){
 	if(controller.mapMove)controller.mapMove();
 };
 Character.prototype.onframe = function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	
 	if(self.RS == "R")self.move();
 };

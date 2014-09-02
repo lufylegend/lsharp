@@ -17,7 +17,7 @@ Qinglong.prototype.run=function(){
 	self.addEventListener(LEvent.ENTER_FRAME, self.onframe);
 };
 Qinglong.prototype.onframe=function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	self.bitmap.bitmapData = new LBitmapData(LMvc.datalist["qinglong-"+self.index]);
 	self.index++;
 	if(self.index > self.length){
@@ -46,13 +46,13 @@ Qinglong.prototype.onframe=function(event){
 	}
 };
 Qinglong.prototype.attackFrame=function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	if(self.speedIndex++ <self.speed)return;
 	self.speedIndex = 0;
 	self.effect.onframe();
 };
 Qinglong.prototype.onEffectComplete=function(event){
-	var self = event.target.parent;
+	var self = event.currentTarget.parent;
 	var obj = self.effectList[self.index];
 	self.index++;
 	if(self.index > self.length){

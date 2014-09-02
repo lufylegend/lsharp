@@ -60,6 +60,20 @@ MapView.prototype.addCharaLayer=function(index,action,direction,x,y,ishero){
 	if(JSON.parse(ishero))self.hero = chara;
 };
 /**
+ * 移除人物
+ * */
+MapView.prototype.removeCharaLayer=function(index){
+	var self = this;
+	var childList = self.charaLayer.childList,child;
+	for(var i=0,l=childList.length;i<l;i++){
+		child = childList[i];
+		if(index == child.index){
+			self.charaLayer.removeChildAt(i);
+			break;
+		}
+	}
+};
+/**
  * 测试层实现
  * */
 MapView.prototype.testCtrlLayerInit=function(){

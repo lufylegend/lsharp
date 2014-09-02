@@ -5,7 +5,6 @@ BackpackView.prototype.construct=function(){};
 BackpackView.prototype.init=function(){
 	var self = this;
 	self.backgroundInit();
-	
 	self.titleInit();
 	self.propsLayer = new LSprite();
 	self.addChild(self.propsLayer);

@@ -20,12 +20,12 @@ function Action(index,action,direction,sizeW,sizeH,RS){
 		list = LGlobal.divideCoordinate(data.width,self.sizeH,1,data.width/self.sizeW >>> 0);
 	}
 	self.anime = new LAnimationTimeline(data,list);
-	self.anime.speed = 1;
+	self.anime.speed = 2;
 	if(self.RS == "S"){
 		self.anime.setAction(0,0,1,direction != CharacterDirection.RIGHT);
-		self.anime.addEventListener(LEvent.COMPLETE,self.oncomplete);
-		self.anime.speed = 4;
+		self.anime.speed = 6;
 	}
+	self.anime.addEventListener(LEvent.COMPLETE,self.oncomplete);
 	self.addChild(self.anime);
 	loader = new LLoader();
 	loader.parent = self;
@@ -37,15 +37,15 @@ function Action(index,action,direction,sizeW,sizeH,RS){
 	}
 }
 Action.prototype.loadOver = function(event){
-	var self = event.target.parent;
-	var bitmapData = new LBitmapData(event.currentTarget);
+	var self = event.currentTarget.parent;
+	var bitmapData = new LBitmapData(event.target);
 	var list = LGlobal.divideCoordinate(bitmapData.width,self.sizeH,1,bitmapData.width/self.sizeW >>> 0);
 	bitmapData.setProperties(0,0,self.sizeW,self.sizeH);
 	self.anime.bitmap.bitmapData = bitmapData;
 	self.anime.imageArray = list;
 };
 Action.prototype.oncomplete = function(event){
-	var self = event.target.parent;
+	var self = event.currentTarget.parent;
 	var charaLayer = self.parent;
 	if(!charaLayer)return;
 	var chara = charaLayer.parent;

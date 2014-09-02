@@ -16,14 +16,14 @@ Effect02.prototype.init=function(){
 	self.addEventListener(LEvent.ENTER_FRAME, self.onframe);
 };
 Effect02.prototype.onframe=function(event){
-	var self = event.target;
+	var self = event.currentTarget;
 	if(self.speedIndex++ <self.speed)return;
 	self.speedIndex = 0;
 	console.log(self.effect);
 	self.effect.onframe();
 };
 Effect02.prototype.onEffectComplete=function(event){
-	var self = event.target.parent;
+	var self = event.currentTarget.parent;
 	self.removeEventListener(LEvent.ENTER_FRAME, self.onframe);
 	self.dispatchEvent(LEvent.COMPLETE);
 };

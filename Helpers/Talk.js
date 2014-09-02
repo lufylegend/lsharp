@@ -38,6 +38,7 @@ function TalkRun(layer,y,index,faceindex,msg,callback){
 	msgText.color = "#FFFFFF";
 	msgText.width = 430;
 	msgText.setWordWrap(true,23);
+	msgText.speed = 2;
 	msgText.wind(callback);
 	talkLayer.addChild(msgText);
 	layer.addChild(talkLayer);
