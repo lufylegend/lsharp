@@ -1560,16 +1560,20 @@ LRPGCharacter.analysis=function(value){
 	}
 };
 LRPGCharacter.changeAction = function (value,start,end){
-	var params = value.substring(start+1,end).split(",");
-	//params:index,action,direction,loop
+	var params = value.substring(start+1,end).split(","), wait;
+	//params:index,action,direction,loop,wait
 	params[3] = (parseInt(params[3]) == 1);
-	params.push(LRPGCharacter.getActionCallback(params[3]));
+	if(params.length == 4){
+		wait = false;
+	}else{
+		wait = (parseInt(params.pop()) == 1);
+	}
+	params.push(LRPGCharacter.getActionCallback(wait));
 	LRPGObject.RPGMap.setActionDirection.apply(LRPGObject.RPGMap,params);
-	//LRPGObject.RPGMap.setActionDirection.call(LRPGObject.RPGMap,params[0],params[1],params[2],LGlobal.script.analysis.bind(LGlobal.script));
 };
-LRPGCharacter.getActionCallback = function (loop){
+LRPGCharacter.getActionCallback = function (wait){
 	var lineValue, callback = LGlobal.script.analysis.bind(LGlobal.script);
-	if(loop && LGlobal.script.lineList.length > 0){
+	if(!wait && LGlobal.script.lineList.length > 0){
 		lineValue = LMath.trim(LGlobal.script.lineList[0]);
 		if(lineValue.indexOf("RPGCharacter.changeAction") == 0){
 			var start = lineValue.indexOf("(");
@@ -1582,9 +1586,9 @@ LRPGCharacter.getActionCallback = function (loop){
 	}
 	return callback;
 };
-LRPGCharacter.getMoveCallback = function (){
+LRPGCharacter.getMoveCallback = function (wait){
 	var lineValue, callback = LGlobal.script.analysis.bind(LGlobal.script);
-	if(LGlobal.script.lineList.length > 0){
+	if(!wait && LGlobal.script.lineList.length > 0){
 		lineValue = LMath.trim(LGlobal.script.lineList[0]);
 		if(lineValue.indexOf("RPGCharacter.move") == 0){
 			callback = null;
@@ -1594,19 +1598,34 @@ LRPGCharacter.getMoveCallback = function (){
 	return callback;
 };
 LRPGCharacter.moveToCharacter = function (value,start,end){
-	var params = value.substring(start+1,end).split(",");
+	var params = value.substring(start+1,end).split(","), wait;
+	if(params.length == 4){
+		wait = false;
+	}else{
+		wait = (parseInt(params.pop()) == 1);
+	}
 	//params:index,index2,x,y
-	LRPGObject.RPGMap.characterMoveToCharacter.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),parseInt(params[3]),LRPGCharacter.getMoveCallback());
+	LRPGObject.RPGMap.characterMoveToCharacter.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),parseInt(params[3]),LRPGCharacter.getMoveCallback(wait));
 };
 LRPGCharacter.move = function (value,start,end){
-	var params = value.substring(start+1,end).split(",");
+	var params = value.substring(start+1,end).split(","), wait;
+	if(params.length == 3){
+		wait = false;
+	}else{
+		wait = (parseInt(params.pop()) == 1);
+	}
 	//params:index,x,y
-	LRPGObject.RPGMap.characterMove.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),LRPGCharacter.getMoveCallback());
+	LRPGObject.RPGMap.characterMove.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),LRPGCharacter.getMoveCallback(wait));
 };
 LRPGCharacter.moveTo = function (value,start,end){
-	var params = value.substring(start+1,end).split(",");
+	var params = value.substring(start+1,end).split(","), wait;
+	if(params.length == 3){
+		wait = false;
+	}else{
+		wait = (parseInt(params.pop()) == 1);
+	}
 	//params:index,x,y
-	LRPGObject.RPGMap.characterMoveTo.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),LRPGCharacter.getMoveCallback());
+	LRPGObject.RPGMap.characterMoveTo.call(LRPGObject.RPGMap,params[0],parseInt(params[1]),parseInt(params[2]),LRPGCharacter.getMoveCallback(wait));
 };
 /*
 *******************************************
