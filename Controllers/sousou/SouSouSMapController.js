@@ -55,42 +55,20 @@ SouSouSMapController.prototype.removeCharacter=function(index,callback){
 	self.view.removeCharaLayer(index);
 	if(typeof callback == "function")callback();
 };
-SouSouSMapController.prototype.mapMove=function(){
-	var self = this;
+SouSouSMapController.prototype.onframe=function(event){
+	var self = event.currentTarget.controller;
 	var map = self.model.map;
-	//根据地图缩放比例，重新计算缩放后的地图大小
-	var w = map.width*self.view.baseLayer.scaleX;
-	var h = map.height*self.view.baseLayer.scaleY;
-	//根据地图缩放比例，重新计算地图的实际显示范围
-	var showW = LGlobal.width/self.view.baseLayer.scaleX;
-	var showH = LGlobal.height/self.view.baseLayer.scaleY;
-	if(w > LGlobal.width){
-		//移动人物层，保持角色的x始终处在地图中央
-		self.view.charaLayer.x  = showW*0.5 - self.view.hero.x;
-		if(self.view.charaLayer.x > 0){
-			self.view.charaLayer.x = 0;
-		}else if(self.view.charaLayer.x < showW - map.width){
-			self.view.charaLayer.x = showW - map.width;
-		}
-	}else{
-		self.view.charaLayer.x = 0;
+	var baseLayer = self.view.baseLayer;
+	if(baseLayer.x > 0){
+		baseLayer.x = 0;
+	}else if(baseLayer.x < LGlobal.width - map.width){
+		baseLayer.x = LGlobal.width - map.width;
 	}
-	if(h > LGlobal.height){
-		//移动人物层，保持角色的y始终处在地图中央
-		self.view.charaLayer.y  = showH*0.5 - self.view.hero.y;
-		if(self.view.charaLayer.y > 0){
-			self.view.charaLayer.y = 0;
-		}else if(self.view.charaLayer.y < showH - map.height){
-			self.view.charaLayer.y = showH - map.height;
-		}
-	}else{
-		self.view.charaLayer.y = 0;
+	if(baseLayer.y > 0){
+		baseLayer.y = 0;
+	}else if(baseLayer.y < LGlobal.height - map.height){
+		baseLayer.y = LGlobal.height - map.height;
 	}
-	//保持其他层的坐标和人物层一致
-	self.view.mapLayer.x = self.view.gridLayer.x = self.view.buildLayer.x = self.view.charaLayer.x;
-	self.view.mapLayer.y = self.view.gridLayer.y = self.view.buildLayer.y = self.view.charaLayer.y;
-	//排序
-    self.view.charaLayer.childList =  self.view.charaLayer.childList.sort(function(a,b){return a.y > b.y;});
 };
 SouSouSMapController.prototype.queryInit=function(){
 	var self = this;
@@ -108,6 +86,12 @@ SouSouSMapController.prototype.queryInit=function(){
 		}
 	}
 	self.query = query;
+};
+SouSouSMapController.prototype.mapMouseUp = function(event){
+	event.currentTarget.stopDrag();
+};
+SouSouSMapController.prototype.mapMouseDown = function(event){
+	event.currentTarget.startDrag();
 };
 SouSouSMapController.prototype.mapClick = function(event){
 	var self = event.currentTarget.parent.parent.controller;

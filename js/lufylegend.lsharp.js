@@ -1050,6 +1050,7 @@ ScriptButton.addButton = function (value,start,end){
 	}
 	//利用按钮的两个状态，新建一个LButton按钮对象
 	var btn = new LButton(upLayer,overLayer);
+	btn.setCursorEnabled(false);
 	btn.x = x;
 	btn.y = y;
 	//得到显示层
