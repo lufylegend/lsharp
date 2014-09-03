@@ -1632,3 +1632,84 @@ LRPGCharacter.moveTo = function (value,start,end){
 RPG游戏脚本 结束
 ********************************************
 */
+
+
+/*
+*******************************************
+战棋游戏脚本 开始
+********************************************
+*/
+/*
+* LScriptSLGSouSou.js
+**/
+var LScriptSLGSouSou = function (){};
+LScriptSLGSouSou.analysis = function (childType, lineValue){
+	var start,end,params;
+	switch(childType){
+		case "SouSouSMap":
+			start = lineValue.indexOf("(");
+			end = lineValue.indexOf(")");
+			params = lineValue.substring(start + 1,end).split(",");
+			if(params.length == 0 || parseInt(params[0]) <= 0){
+ 				//敌军等级非固定设定 暂略
+			}else{
+				//敌军等级固定设定 暂略
+			}
+			LGlobal.script.scriptLayer.controller.sousouSMapLoad();
+			break;
+		default:
+			LGlobal.script.analysis();
+	}
+};
+/*
+* LSouSouSMapScript.js
+**/
+LSouSouSMapScript = function(){};
+LSouSouSMapScript.analysis=function(){
+	var script = LGlobal.script;
+	if(script.lineList.length == 0)return;
+	var lineValue = LMath.trim(script.lineList.shift());
+	if(lineValue.length == 0){
+		LSouSouSMapScript.analysis();
+		return;
+	}
+	trace("LSouSouSMapScript analysis lineValue = " + lineValue);
+	switch(lineValue){
+		case "SouSouSMap.end()":
+			//暂略
+			return;
+		case "initialization.start":
+			LSouSouSMapScript.initialization();
+			break;
+		default:
+			LSouSouSMapScript.analysis();
+	}
+};
+LSouSouSMapScript.initialization=function(){
+	var script = LGlobal.script;
+	var lineValue = LMath.trim(script.lineList.shift());
+	trace("script.lineList = " + script.lineList);
+	if(lineValue.length == 0){
+		LSouSouSMapScript.initialization();
+		return;
+	}
+	if(lineValue == "initialization.end"){
+		LSouSouSMapScript.analysis();
+		return;
+	}
+	var params,i;
+	var start = lineValue.indexOf("(");
+	var end = lineValue.indexOf(")");
+	switch(lineValue.substr(0,start)){
+		case "addMap":
+			LSouSouObject.SouSouSMap.addMap(lineValue.substring(start+1,end).split(","));
+			break;
+		default:
+			LSouSouSMapScript.initialization();
+	}
+};
+/*
+*******************************************
+战棋游戏脚本 结束
+********************************************
+*/

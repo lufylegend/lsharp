@@ -16,7 +16,7 @@ IndexController.prototype.helperLoad=function(){
 };
 IndexController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["window/WindowBackground","props/PropsRecovery","props/PropsSpecial","props/PropsWeaponry","LRPGObject","button/ButtonSelect","character/MemberData"],self.libraryComplete);
+	self.load.library(["window/WindowBackground","props/PropsRecovery","props/PropsSpecial","props/PropsWeaponry","LRPGObject","LSouSouObject","button/ButtonSelect","character/MemberData"],self.libraryComplete);
 };
 IndexController.prototype.libraryComplete=function(){
 	var self = this;
@@ -34,4 +34,16 @@ IndexController.prototype.mapComplete=function(){
 	var map = new MapController();
 	LRPGObject.RPGMap = map;
 	self.view.addChild(map.view);
+};
+IndexController.prototype.sousouSMapLoad=function(){
+	var self = this;
+	self.loadMvc("sousou/SouSouSMap",self.sousouSMapComplete);
+};
+IndexController.prototype.sousouSMapComplete=function(){
+	var self = this;
+	self.view.die();
+	self.view.removeAllChild();
+	var smap = new SouSouSMapController();
+	LSouSouObject.SouSouSMap = smap;
+	self.view.addChild(smap.view);
 };

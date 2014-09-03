@@ -1,57 +1,61 @@
-function SouSouSSouSouSMapController(){
-	base(this,SouSouSSouSouSMapController,[]);
+function SouSouSMapController(){
+	LExtends(this,MyController,[]);
 }
-SouSouSSouSouSMapController.prototype.construct=function(){
+SouSouSMapController.prototype.construct=function(){
 	var self = this;
 	self.initOver = false;
 	LMvc.keepLoading(true);
 	self.libraryLoad();
 };
-SouSouSSouSouSMapController.prototype.imagesLoad = function(){
+SouSouSMapController.prototype.imagesLoad = function(){
 	var self = this;
 	var list = self.model.getImages();
 	self.load.image(list,self.init);
 };
-SouSouSSouSouSMapController.prototype.libraryLoad=function(){
+SouSouSMapController.prototype.libraryLoad=function(){
 	var self = this;
-	self.load.library(["character/Action","character/Character","character/Face","LStarQuery","Items/Entrance","BitmapSprite"],self.helperLoad);
+	self.load.library(["character/Action","character/Character","character/Face","LStarQuery","Items/Entrance","BitmapSprite","map/LSouSouSMapBackground"],self.helperLoad);
 };
-SouSouSSouSouSMapController.prototype.helperLoad=function(){
+SouSouSMapController.prototype.helperLoad=function(){
 	var self = this;
 	self.load.helper(["GetButton","Talk"],self.libraryComplete);
 };
-SouSouSSouSouSMapController.prototype.libraryComplete=function(){
+SouSouSMapController.prototype.libraryComplete=function(){
 	var self = this;
-	LRPGMapScript.analysis();
+	LSouSouSMapScript.analysis();
 };
-SouSouSSouSouSMapController.prototype.addMap=function(mapPath){
+SouSouSMapController.prototype.addMap=function(mapPath){
 	var self = this;
 	self.model.loadMapFile(mapPath,self.loadMapFileOver);
 };
-SouSouSSouSouSMapController.prototype.addCoordinateCheck=function(index,startX,startY,endX,endY,funName){
+SouSouSMapController.prototype.addCoordinateCheck=function(index,startX,startY,endX,endY,funName){
 	this.model.addCoordinateCheck(index,startX,startY,endX,endY,funName);
 };
-SouSouSSouSouSMapController.prototype.loadMapFileOver=function(){
+SouSouSMapController.prototype.loadMapFileOver=function(){
 	var self = this;
 	self.imagesLoad();
 };
-SouSouSSouSouSMapController.prototype.addCharacter=function(index,action,direction,x,y,ishero,callback){
+SouSouSMapController.prototype.init = function(){
+	var self = this;
+	LMvc.keepLoading(false);
+	self.view.init();
+	console.log("SouSouSMapController.prototype.init");
+	return;
+	LRPGMapScript.initialization();
+};
+
+
+SouSouSMapController.prototype.addCharacter=function(index,action,direction,x,y,ishero,callback){
 	var self = this;
 	self.view.addCharaLayer(index,action,direction,x,y,ishero);
 	if(typeof callback == "function")callback();
 };
-SouSouSSouSouSMapController.prototype.removeCharacter=function(index,callback){
+SouSouSMapController.prototype.removeCharacter=function(index,callback){
 	var self = this;
 	self.view.removeCharaLayer(index);
 	if(typeof callback == "function")callback();
 };
-SouSouSSouSouSMapController.prototype.init = function(){
-	var self = this;
-	LMvc.keepLoading(false);
-	self.view.init();
-	LRPGMapScript.initialization();
-};
-SouSouSSouSouSMapController.prototype.mapMove=function(){
+SouSouSMapController.prototype.mapMove=function(){
 	var self = this;
 	var map = self.model.map;
 	//根据地图缩放比例，重新计算缩放后的地图大小
