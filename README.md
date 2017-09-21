@@ -4,13 +4,14 @@ L#
 《游戏脚本的设计与开发》
 -----------------------------------
 
-###目录
+### 目录
 
 章节 | 标题 | 连接
 --- | --- | ---
 序 | 游戏脚本简介 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/8888787)
 
-####第一章 基本功能
+#### 第一章 基本功能
+
 章节 | 标题 | 连接
 --- | --- | ---
 1.1 | 读取和解析一个脚本文件 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/8919823)
@@ -21,7 +22,8 @@ L#
 1.6 | 按钮，脚本的暂停和标签 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/9110513)
 第一章总结 | 文字脚本的功能扩展和一个游戏测试 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/9160841)
 
-####第二章 战棋类游戏
+#### 第二章 战棋类游戏
+
 章节 | 标题 | 连接
 --- | --- | ---
 2.1 | 快速显示一张战场地图 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/9210753)
@@ -29,7 +31,8 @@ L#
 2.3 | 战场上的寻路和移动 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/9404147)
 2.4 | 物理攻击 | [点击链接](http://blog.csdn.net/lufy_legend/article/details/9918169)
 
-####第三章 RPG类游戏
+#### 第三章 RPG类游戏
+
 章节 | 标题 | 连接
 --- | --- | ---
 3.1 | RPG地图到底怎么做？ | [点击链接](http://blog.csdn.net/lufy_legend/article/details/17417085)
@@ -41,4 +44,4 @@ L#
 3.7 | 战斗系统之自动战斗(一) | [点击链接](http://blog.csdn.net/lufy_legend/article/details/23744323)
 3.8 | 通过脚本来自由控制游戏(一) | [点击链接](http://blog.csdn.net/lufy_legend/article/details/39011709)
 
-####第四章 待定
+#### 第四章 待定
